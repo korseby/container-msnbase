@@ -9,7 +9,7 @@ LABEL Description="MSnbase: Basic plotting, data manipulation and processing of 
 
 # Install packages for compilation
 RUN apt-get -y update
-RUN apt-get -y --no-install-recommends install make gcc gfortran g++ libxml-dev
+RUN apt-get -y --no-install-recommends install make gcc gfortran g++ libblas-dev liblapack-dev libxml++2.6-dev libexpat1-dev
 
 # Install dependencies
 RUN R -e 'install.packages(c("ggplot2","digest","lattice","XML","Rcpp","reshape2","plyr"), repos="https://mirrors.ebi.ac.uk/CRAN/")'
