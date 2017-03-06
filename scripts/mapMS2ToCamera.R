@@ -10,7 +10,7 @@ rDataFilesMS2<-NA
 inputCamera<-NA
 output<-NA
 ppm<-10
-RT<-10
+rt<-10
 for(arg in args)
 {
   argCase<-strsplit(x = arg,split = "=")[[1]][1]
@@ -42,10 +42,10 @@ for(arg in args)
     ppm=as.numeric(value)
     
   }
-  if(argCase=="RT")
+  if(argCase=="rt")
   {
     
-    RT=as.numeric(value)
+    rt=as.numeric(value)
     
   }
   
@@ -125,8 +125,8 @@ for(MS2 in rDataFilesMS2)
 {
   load(file = MS2)
   MSMSdata<-get(varNameForNextStep)
-  mappingResult<-IntervalMerge(cameraObject = CameraObject,MSMSdata = MSMSdata,PlusTime = RT,
-                     MinusTime = RT,ppm = PPM,listOfMS2Mapped = mappingResult$mapped,
+  mappingResult<-IntervalMerge(cameraObject = CameraObject,MSMSdata = MSMSdata,PlusTime = rt,
+                     MinusTime = rt,ppm = ppm,listOfMS2Mapped = mappingResult$mapped,
                      listOfUnMapped = mappingResult$unmapped)
 }
 
