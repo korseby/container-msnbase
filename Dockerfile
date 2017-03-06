@@ -1,4 +1,4 @@
-FROM container-registry.phenomenal-h2020.eu/phnmnl/CAMERA:latest
+FROM container-registry.phenomenal-h2020.eu/phnmnl/camera:latest
 
 MAINTAINER PhenoMeNal-H2020 Project (phenomenal-h2020-users@googlegroups.com)
 
