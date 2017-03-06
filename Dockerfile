@@ -12,7 +12,7 @@ RUN apt-get -y update
 RUN apt-get -y --no-install-recommends install make gcc gfortran g++ libblas-dev liblapack-dev libxml++2.6-dev libexpat1-dev
 
 # Install dependencies
-RUN R -e 'install.packages(c("ggplot2","digest","lattice","XML","Rcpp","reshape2","plyr"), repos="https://mirrors.ebi.ac.uk/CRAN/")'
+RUN R -e 'install.packages(c("ggplot2","digest","lattice","XML","Rcpp","reshape2","plyr","stringr","intervals"), repos="https://mirrors.ebi.ac.uk/CRAN/")'
 
 # Install CAMERA
 RUN R -e 'source("https://bioconductor.org/biocLite.R"); biocLite("MSnbase")'
