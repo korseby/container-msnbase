@@ -24,10 +24,11 @@ RUN apt-get -y --purge --auto-remove remove make gcc gfortran g++
 RUN apt-get -y clean && apt-get -y autoremove && rm -rf /var/lib/{cache,log}/ /tmp/* /var/tmp/*
 
 # Add scripts folder to container
-ADD scripts/mapMS2ToCamera.R /usr/local/bin/mapMS2ToCamera.R
-ADD scripts/MS2ToMetFrag.R /usr/local/bin/MS2ToMetFrag.R
-ADD scripts/readMS2MSnBase.R /usr/local/bin/readMS2MSnBase.R
-#RUN chmod +x /usr/local/bin/show_chromatogram.r
+ADD scripts/mapMS2ToCamera.R /usr/local/bin/mapMS2ToCamera.r
+ADD scripts/MS2ToMetFrag.R /usr/local/bin/MS2ToMetFrag.r
+ADD scripts/readMS2MSnBase.R /usr/local/bin/readMS2MSnBase.r
+
+RUN chmod +x /usr/local/bin/*.r
 
 # Define Entry point script
 #ENTRYPOINT [ "Rscript" ]
