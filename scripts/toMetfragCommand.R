@@ -122,7 +122,7 @@ toMetfragCommand<-function(mappedMS2=NA,
         }
         MS2<-as.matrix(cbind(MSMS@mz,MSMS@intensity))
 	# if number MS/MS peaks is too low
-	if(dim(MS2)[1] < minPeaks) { next }
+	if(length(MSMS@mz) == 0 || dim(MS2)[1] < minPeaks) { next }
         if(searchChargeFlag==F)
         {
           settingsObject[["NeutralPrecursorMass"]]<-neutralMASS
@@ -179,6 +179,7 @@ toMetfragCommand<-function(mappedMS2=NA,
       }
       neutralMASS<-MSMS@precursorMz
       MS2<-as.matrix(cbind(MSMS@mz,MSMS@intensity))
+      if(length(MSMS@mz) == 0 || dim(MS2)[1] < minPeaks) { next }
       if(searchMultipleChargeAdducts==F)
       {
         
