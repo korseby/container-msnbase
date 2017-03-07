@@ -75,8 +75,8 @@ load(inputCamera)
 cameraObject<-get(varNameForNextStep)
 
 
-source("adductCalculator.R")
-source("toMetfragCommand.R")
+source("/usr/local/bin/adductCalculator.r")
+source("/usr/local/bin/toMetfragCommand.r")
 library(stringr)
 toMetfragCommand(mappedMS2 = MappedMS2s$mapped,unmappedMS2 = MappedMS2s$unmapped,
                  cameraObject = cameraObject,searchMultipleChargeAdducts = T,includeUnmapped = T,
