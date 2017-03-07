@@ -10,6 +10,8 @@ if(length(args)==0)stop("No file has been specified! Please select a file for pe
 inputMS2<-NA
 inputCamera<-NA
 output<-NA
+maxSpectra<-NA
+minPeaks<-0
 precursortppm<-10
 fragmentppm<-10
 fragmentabs<-0.001
@@ -55,6 +57,18 @@ for(arg in args)
     database=as.character(value)
     
   }
+  if(argCase=="minPeaks")
+  {
+
+    minPeaks=as.numeric(value)
+
+  }
+  if(argCase=="maxSpectra")
+  {
+
+    maxSpectra=as.numeric(value)
+
+  }
   if(argCase=="output")
   {
     output=as.character(value)
@@ -80,4 +94,4 @@ source("/usr/local/bin/toMetfragCommand.r")
 library(stringr)
 toMetfragCommand(mappedMS2 = MappedMS2s$mapped,unmappedMS2 = MappedMS2s$unmapped,
                  cameraObject = cameraObject,searchMultipleChargeAdducts = T,includeUnmapped = T,
-                 includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=output)
+                 includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=output, minPeaks=minPeaks, maxSpectra=maxSpectra)

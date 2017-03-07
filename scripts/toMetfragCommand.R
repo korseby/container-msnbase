@@ -24,11 +24,10 @@ toMetfragCommand<-function(mappedMS2=NA,
                            cameraObject=NA,
                            searchMultipleChargeAdducts=F,
                            includeUnmapped=T,includeMapped=T,
-                           settingsObject=list(),preprocess=NA,savePath="")
+                           settingsObject=list(),preprocess=NA,savePath="",minPeaks=0,maxSpectra=NA)
 {
-  
-  source("/usr/local/bin/adductCalculator.r")
   peakList<-getPeaklist(cameraObject)
+  numberSpectraWritten <- 0
   if(includeMapped==T)
   {
     searchChargeFlag<-F
@@ -121,6 +120,8 @@ toMetfragCommand<-function(mappedMS2=NA,
           
         }
         MS2<-as.matrix(cbind(MSMS@mz,MSMS@intensity))
+	# if number MS/MS peaks is too low
+	if(dim(MS2)[1] < minPeaks) { next }
         if(searchChargeFlag==F)
         {
           settingsObject[["NeutralPrecursorMass"]]<-neutralMASS
@@ -129,7 +130,10 @@ toMetfragCommand<-function(mappedMS2=NA,
           fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
          if(savePath!="")
           fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
-          parameterToCommand(settingsObject,fileName)
+	 if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
+         	parameterToCommand(settingsObject,fileName)
+	 	numberSpectraWritten<-numberSpectraWritten+1
+	 }
         }else if(searchChargeFlag==T & searchMultipleChargeAdducts==T)
         {
           
@@ -145,7 +149,10 @@ toMetfragCommand<-function(mappedMS2=NA,
             fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
             if(savePath!="")
               fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
-            parameterToCommand(settingsObject,fileName)
+            if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
+	    	parameterToCommand(settingsObject,fileName)
+	    	numberSpectraWritten<-numberSpectraWritten+1
+	    }
           }
         }
         
@@ -180,8 +187,10 @@ toMetfragCommand<-function(mappedMS2=NA,
         fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
         if(savePath!="")
           fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
-        parameterToCommand(settingsObject,fileName)
-        
+	if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
+		parameterToCommand(settingsObject,fileName)
+        	numberSpectraWritten<-numberSpectraWritten+1 
+	}
       }else if(searchMultipleChargeAdducts==T)
       {
         
@@ -197,7 +206,10 @@ toMetfragCommand<-function(mappedMS2=NA,
           fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
           if(savePath!="")
             fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
-          parameterToCommand(settingsObject,fileName)
+          if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
+		parameterToCommand(settingsObject,fileName)
+	 	numberSpectraWritten<-numberSpectraWritten+1
+	  }
         }
         
         
