@@ -12,6 +12,8 @@ inputCamera<-NA
 output<-NA
 maxSpectra<-NA
 minPeaks<-0
+minPrecursorMass<-NA
+maxPrecursorMass<-NA
 precursortppm<-10
 fragmentppm<-10
 fragmentabs<-0.001
@@ -31,6 +33,18 @@ for(arg in args)
     
     inputCamera=as.character(value)
     
+  }
+  if(argCase=="maxPrecursorMass")
+  {
+
+    maxPrecursorMass=as.numeric(value)
+
+  }
+  if(argCase=="minPrecursorMass")
+  {
+
+    minPrecursorMass=as.numeric(value)
+
   }
   if(argCase=="precursorppm")
   {
@@ -94,4 +108,5 @@ source("/usr/local/bin/toMetfragCommand.r")
 library(stringr)
 toMetfragCommand(mappedMS2 = MappedMS2s$mapped,unmappedMS2 = MappedMS2s$unmapped,
                  cameraObject = cameraObject,searchMultipleChargeAdducts = T,includeUnmapped = T,
-                 includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=output, minPeaks=minPeaks, maxSpectra=maxSpectra)
+                 includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=output, minPeaks=minPeaks, maxSpectra=maxSpectra,
+		 maxPrecursorMass = maxPrecursorMass, minPrecursorMass = minPrecursorMass)

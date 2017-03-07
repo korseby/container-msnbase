@@ -25,7 +25,8 @@ toMetfragCommand<-function(mappedMS2=NA,
                            cameraObject=NA,
                            searchMultipleChargeAdducts=F,
                            includeUnmapped=T,includeMapped=T,
-                           settingsObject=list(),preprocess=NA,savePath="",minPeaks=0,maxSpectra=NA)
+                           settingsObject=list(),preprocess=NA,savePath="",minPeaks=0,maxSpectra=NA,
+			   maxPrecursorMass = NA, minPrecursorMass = NA)
 {
   peakList<-getPeaklist(cameraObject)
   numberSpectraWritten <- 0
@@ -121,7 +122,7 @@ toMetfragCommand<-function(mappedMS2=NA,
           
         }
         MS2<-as.matrix(cbind(MSMS@mz,MSMS@intensity))
-	# if number MS/MS peaks is too low
+        # if number MS/MS peaks is too low
 	if(length(MSMS@mz) == 0 || dim(MS2)[1] < minPeaks) { next }
         if(searchChargeFlag==F)
         {
@@ -131,6 +132,8 @@ toMetfragCommand<-function(mappedMS2=NA,
           fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
          if(savePath!="")
           fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+         if(!is.na(maxPrecursorMass) & maxPrecursorMass < neutralMASS) { next }
+         if(!is.na(minPrecursorMass) & minPrecursorMass > neutralMASS) { next }
 	 if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
          	parameterToCommand(settingsObject,fileName)
 	 	numberSpectraWritten<-numberSpectraWritten+1
@@ -143,13 +146,15 @@ toMetfragCommand<-function(mappedMS2=NA,
                                                adduct = gsub("\\[|\\]","",seachAdducts),mode = "pos")
           for(k in nrow(allAdductForSearch))
           {
-            
-            settingsObject[["NeutralPrecursorMass"]]<-allAdductForSearch[k,"correctedMS"]
+            mass <- allAdductForSearch[k,"correctedMS"]
+            settingsObject[["NeutralPrecursorMass"]]<-mass
             settingsObject[["PeakList"]]<-MS2
             fileName<-""
             fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
             if(savePath!="")
               fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+            if(!is.na(maxPrecursorMass) & maxPrecursorMass < mass) { next }
+            if(!is.na(minPrecursorMass) & minPrecursorMass > mass) { next }
             if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
 	    	parameterToCommand(settingsObject,fileName)
 	    	numberSpectraWritten<-numberSpectraWritten+1
@@ -189,25 +194,28 @@ toMetfragCommand<-function(mappedMS2=NA,
         fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
         if(savePath!="")
           fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+        if(!is.na(maxPrecursorMass) & maxPrecursorMass < neutralMASS) { next }
+        if(!is.na(minPrecursorMass) & minPrecursorMass > neutralMASS) { next }
 	if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
 		parameterToCommand(settingsObject,fileName)
         	numberSpectraWritten<-numberSpectraWritten+1 
 	}
       }else if(searchMultipleChargeAdducts==T)
       {
-        
         allChargesHits<-list()
         allAdductForSearch<-adductCalculator(mz = neutralMASS,charge = NA,
                                              adduct = NA,mode = "pos")
         for(k in nrow(allAdductForSearch))
         {
-          
-          settingsObject[["NeutralPrecursorMass"]]<-allAdductForSearch[k,"correctedMS"]
+          mass <- allAdductForSearch[k,"correctedMS"]
+          settingsObject[["NeutralPrecursorMass"]]<-mass
           settingsObject[["PeakList"]]<-MS2
           fileName<-""
           fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
           if(savePath!="")
             fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+          if(!is.na(maxPrecursorMass) & maxPrecursorMass < mass) { next }
+          if(!is.na(minPrecursorMass) & minPrecursorMass > mass) { next }
           if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
 		parameterToCommand(settingsObject,fileName)
 	 	numberSpectraWritten<-numberSpectraWritten+1
