@@ -27,7 +27,7 @@ toMetfragCommand<-function(mappedMS2=NA,
                            settingsObject=list(),preprocess=NA,savePath="")
 {
   
-  source("adductCalculator.R")
+  source("/usr/local/bin/adductCalculator.r")
   peakList<-getPeaklist(cameraObject)
   if(includeMapped==T)
   {
