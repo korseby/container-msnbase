@@ -17,7 +17,7 @@ parameterToCommand<-function(param,outputName="")
  ### the output is rt_mz_randomNumber. the random number is to prevent overwritting of ms2 withs the same precursor mz
  cat(toOutput,file = outputName)
 }
-require(metfRag)
+require(CAMERA)
 require(stringr)
 toMetfragCommand<-function(mappedMS2=NA,
                            unmappedMS2=NA,
@@ -180,7 +180,7 @@ toMetfragCommand<-function(mappedMS2=NA,
         fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
         if(savePath!="")
           fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
-        parameterToCommand(savePath,"/",settingsObject,fileName)
+        parameterToCommand(settingsObject,fileName)
         
       }else if(searchMultipleChargeAdducts==T)
       {
@@ -197,7 +197,7 @@ toMetfragCommand<-function(mappedMS2=NA,
           fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
           if(savePath!="")
             fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
-          parameterToCommand(savePath,"/",settingsObject,fileName)
+          parameterToCommand(settingsObject,fileName)
         }
         
         

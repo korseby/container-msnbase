@@ -61,7 +61,7 @@ for(arg in args)
   }
 }
 
-if(is.na(inputMS2) | is.na(inputCamera) | is.na(output)) stop("Both input (CAMERA and MS2 ) and output need to be specified!\n")
+if(is.na(inputMS2) | is.na(inputCamera) | is.na(output)) stop("Both input (CAMERA and MS2) and output need to be specified!\n")
 
 settingsObject<-list()
 settingsObject[["DatabaseSearchRelativeMassDeviation"]]<-precursortppm
