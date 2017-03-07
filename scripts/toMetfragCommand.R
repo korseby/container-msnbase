@@ -5,14 +5,15 @@ parameterToCommand<-function(param,outputName="")
   param$MetFragPeakListReader<-"de.ipbhalle.metfraglib.peaklistreader.FilteredStringTandemMassPeakListReader"
   param$MetFragCandidateWriter<-"CSV"
   param$PeakListString<-paste(apply(param$PeakList,1,paste,collapse="_"),collapse = ";")
+  param$SampleName<-outputName
   param[[which(names(param)=="PeakList")]]<-NULL
 
  param$MetFragDatabaseType
  toOutput<-""
  for(i in 1:length(param))
  {
-
-   toOutput<- paste(toOutput," ",names(param)[i],"=",param[[i]],sep="")
+   if(i==1) {toOutput<- paste(names(param)[i],"=",param[[i]],sep="")
+   } else {toOutput<- paste(toOutput," ",names(param)[i],"=",param[[i]],sep="")}
  }
  ### the output is rt_mz_randomNumber. the random number is to prevent overwritting of ms2 withs the same precursor mz
  cat(toOutput,file = outputName)
