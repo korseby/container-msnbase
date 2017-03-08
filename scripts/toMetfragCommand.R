@@ -129,9 +129,9 @@ toMetfragCommand<-function(mappedMS2=NA,
           settingsObject[["NeutralPrecursorMass"]]<-neutralMASS
           settingsObject[["PeakList"]]<-MS2
           fileName<-""
-          fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+          fileName<-paste(as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
          if(savePath!="")
-          fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+          fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
          if(!is.na(maxPrecursorMass) & maxPrecursorMass < neutralMASS) { next }
          if(!is.na(minPrecursorMass) & minPrecursorMass > neutralMASS) { next }
 	 if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
@@ -150,9 +150,9 @@ toMetfragCommand<-function(mappedMS2=NA,
             settingsObject[["NeutralPrecursorMass"]]<-mass
             settingsObject[["PeakList"]]<-MS2
             fileName<-""
-            fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+            fileName<-paste(as.character(MSMS@rt),"_",as.character(round(mass,4)),"_",as.character(runif(1)),".txt",sep="")
             if(savePath!="")
-              fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+              fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(round(mass,4)),"_",as.character(runif(1)),".txt",sep="")
             if(!is.na(maxPrecursorMass) & maxPrecursorMass < mass) { next }
             if(!is.na(minPrecursorMass) & minPrecursorMass > mass) { next }
             if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
@@ -191,9 +191,9 @@ toMetfragCommand<-function(mappedMS2=NA,
         settingsObject[["NeutralPrecursorMass"]]<-neutralMASS
         settingsObject[["PeakList"]]<-MS2
         fileName<-""
-        fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+        fileName<-paste(as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
         if(savePath!="")
-          fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+          fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
         if(!is.na(maxPrecursorMass) & maxPrecursorMass < neutralMASS) { next }
         if(!is.na(minPrecursorMass) & minPrecursorMass > neutralMASS) { next }
 	if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
@@ -211,9 +211,9 @@ toMetfragCommand<-function(mappedMS2=NA,
           settingsObject[["NeutralPrecursorMass"]]<-mass
           settingsObject[["PeakList"]]<-MS2
           fileName<-""
-          fileName<-paste(as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+          fileName<-paste(as.character(MSMS@rt),"_",as.character(round(mass,4)),"_",as.character(runif(1)),".txt",sep="")
           if(savePath!="")
-            fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(MSMS@precursorMz),"_",as.character(runif(1)),".txt",sep="")
+            fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(round(mass,4)),"_",as.character(runif(1)),".txt",sep="")
           if(!is.na(maxPrecursorMass) & maxPrecursorMass < mass) { next }
           if(!is.na(minPrecursorMass) & minPrecursorMass > mass) { next }
           if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
