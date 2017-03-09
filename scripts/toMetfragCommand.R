@@ -187,7 +187,6 @@ toMetfragCommand<-function(mappedMS2=NA,
       if(length(MSMS@mz) == 0 || dim(MS2)[1] < minPeaks) { next }
       if(searchMultipleChargeAdducts==F)
       {
-        
         settingsObject[["NeutralPrecursorMass"]]<-neutralMASS
         settingsObject[["PeakList"]]<-MS2
         fileName<-""
@@ -205,7 +204,7 @@ toMetfragCommand<-function(mappedMS2=NA,
         allChargesHits<-list()
         allAdductForSearch<-adductCalculator(mz = neutralMASS,charge = NA,
                                              adduct = NA,mode = "pos")
-        for(k in nrow(allAdductForSearch))
+        for(k in 1:nrow(allAdductForSearch))
         {
           mass <- allAdductForSearch[k,"correctedMS"]
           settingsObject[["NeutralPrecursorMass"]]<-mass

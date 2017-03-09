@@ -107,6 +107,6 @@ source("/usr/local/bin/adductCalculator.r")
 source("/usr/local/bin/toMetfragCommand.r")
 library(stringr)
 toMetfragCommand(mappedMS2 = MappedMS2s$mapped,unmappedMS2 = MappedMS2s$unmapped,
-                 cameraObject = cameraObject,searchMultipleChargeAdducts = T,includeUnmapped = T,
-                 includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=output, minPeaks=minPeaks, maxSpectra=maxSpectra,
-		 maxPrecursorMass = maxPrecursorMass, minPrecursorMass = minPrecursorMass)
+                 cameraObject = cameraObject,searchMultipleChargeAdducts = T,includeUnmapped = F,
+                 includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=output, minPeaks=minPeaks, 
+		 maxSpectra=maxSpectra, maxPrecursorMass = maxPrecursorMass, minPrecursorMass = minPrecursorMass)
