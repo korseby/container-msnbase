@@ -28,7 +28,7 @@ toMetfragCommand<-function(mappedMS2=NA,
                            settingsObject=list(),preprocess=NA,savePath="",minPeaks=0,maxSpectra=NA,
 			   maxPrecursorMass = NA, minPrecursorMass = NA)
 {
-  print(paste("lens",length(mappedMS2),length(unmappedMS2))
+  print(paste("lens",length(mappedMS2),length(unmappedMS2)))
   peakList<-getPeaklist(cameraObject)
   numberSpectraWritten <- 0
   if(includeMapped==T)
