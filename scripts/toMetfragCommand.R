@@ -28,7 +28,6 @@ toMetfragCommand<-function(mappedMS2=NA,
                            settingsObject=list(),preprocess=NA,savePath="",minPeaks=0,maxSpectra=NA,
 			   maxPrecursorMass = NA, minPrecursorMass = NA)
 {
-  print(paste("lens",length(mappedMS2),length(unmappedMS2)))
   peakList<-getPeaklist(cameraObject)
   numberSpectraWritten <- 0
   if(includeMapped==T)
@@ -124,12 +123,8 @@ toMetfragCommand<-function(mappedMS2=NA,
         }
         MS2<-as.matrix(cbind(MSMS@mz,MSMS@intensity))
         # if number MS/MS peaks is too low
-	print(MSMS@mz)
-        print(length(MSMS@mz))
-        print(minPeaks)
-        print((length(MSMS@mz) == 0))
-        print((dim(MS2)[1] < minPeaks))
-	if(length(MSMS@mz) == 0 || dim(MS2)[1] < minPeaks) { next }
+	if(length(MSMS@mz) == 0) { next }
+	if(!is.na(minPeaks) & dim(MS2)[1] < minPeaks) { next }
         if(searchChargeFlag==F)
         {
           settingsObject[["NeutralPrecursorMass"]]<-neutralMASS
@@ -150,7 +145,7 @@ toMetfragCommand<-function(mappedMS2=NA,
           allChargesHits<-list()
           allAdductForSearch<-adductCalculator(mz = neutralMASS,charge = seachCharge,
                                                adduct = gsub("\\[|\\]","",seachAdducts),mode = "pos")
-          for(k in nrow(allAdductForSearch))
+          for(k in 1:nrow(allAdductForSearch))
           {
             mass <- allAdductForSearch[k,"correctedMS"]
             settingsObject[["NeutralPrecursorMass"]]<-mass
@@ -190,9 +185,8 @@ toMetfragCommand<-function(mappedMS2=NA,
       }
       neutralMASS<-MSMS@precursorMz
       MS2<-as.matrix(cbind(MSMS@mz,MSMS@intensity))
-      print(MSMS@mz)
-      print(length(MSMS@mz))
-      if(length(MSMS@mz) == 0 || dim(MS2)[1] < minPeaks) { next }
+      if(length(MSMS@mz) == 0) { next }
+      if(!is.na(minPeaks) & dim(MS2)[1] < minPeaks) { next }
       if(searchMultipleChargeAdducts==F)
       {
         settingsObject[["NeutralPrecursorMass"]]<-neutralMASS
