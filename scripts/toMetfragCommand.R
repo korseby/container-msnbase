@@ -28,6 +28,7 @@ toMetfragCommand<-function(mappedMS2=NA,
                            settingsObject=list(),preprocess=NA,savePath="",minPeaks=0,maxSpectra=NA,
 			   maxPrecursorMass = NA, minPrecursorMass = NA)
 {
+  print(paste("lens",length(mappedMS2),length(unmappedMS2))
   peakList<-getPeaklist(cameraObject)
   numberSpectraWritten <- 0
   if(includeMapped==T)
@@ -123,6 +124,8 @@ toMetfragCommand<-function(mappedMS2=NA,
         }
         MS2<-as.matrix(cbind(MSMS@mz,MSMS@intensity))
         # if number MS/MS peaks is too low
+	print(MSMS@mz)
+        print(length(MSMS@mz)
 	if(length(MSMS@mz) == 0 || dim(MS2)[1] < minPeaks) { next }
         if(searchChargeFlag==F)
         {
@@ -184,6 +187,8 @@ toMetfragCommand<-function(mappedMS2=NA,
       }
       neutralMASS<-MSMS@precursorMz
       MS2<-as.matrix(cbind(MSMS@mz,MSMS@intensity))
+      print(MSMS@mz)
+      print(length(MSMS@mz)
       if(length(MSMS@mz) == 0 || dim(MS2)[1] < minPeaks) { next }
       if(searchMultipleChargeAdducts==F)
       {
