@@ -126,6 +126,9 @@ toMetfragCommand<-function(mappedMS2=NA,
         # if number MS/MS peaks is too low
 	print(MSMS@mz)
         print(length(MSMS@mz))
+        print(minPeaks)
+        print((length(MSMS@mz) == 0))
+        print((dim(MS2)[1] < minPeaks))
 	if(length(MSMS@mz) == 0 || dim(MS2)[1] < minPeaks) { next }
         if(searchChargeFlag==F)
         {
