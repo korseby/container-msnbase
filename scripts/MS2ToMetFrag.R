@@ -16,7 +16,7 @@ minPrecursorMass<-NA
 maxPrecursorMass<-NA
 precursortppm<-10
 fragmentppm<-10
-fragmentabs<-0.001
+fragmentabs<-0.01
 database<-"KEGG"
 for(arg in args)
 {
