@@ -1,12 +1,10 @@
-#!/usr/bin/env Rscript
-
-#adductCalculator(mz=853.33089,charge=2)
 
 adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA)
 {
+  if(is.na(mz))stop("Provide the mz!")
+  if(is.na(mode))stop("Provide the polarity!")
   
-  
-  Ion.name=c("M+3H",
+  Ion.name.pos=c("M+3H",
              "M+2H+Na",
              "M+H+2Na",
              "M+3Na",
@@ -38,7 +36,7 @@ adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA)
              "2M+ACN+H",
              "2M+ACN+Na")
   
-  Ion.mass=c(
+  Ion.mass.pos=c(
     "M/3 + 1.007276",
     "M/3 + 8.334590",
     "M/3 + 15.7661904",
@@ -71,7 +69,7 @@ adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA)
     "2M + 42.033823",
     "2M + 64.015765")
   
-  Charge=c(
+  Charge.pos=c(
     "3+",
     "3+",
     "3+",
@@ -104,31 +102,136 @@ adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA)
     "1+",
     "1+")
   
-  adductsFile<-data.frame(Ion.name=Ion.name,Ion.mass=Ion.mass,Charge=Charge)#read.csv("adductList.csv")
-  if(is.na(mz))stop("Provide the mz!")
-  tmpAdduct<-adductsFile
-  if(!is.na(charge) & is.numeric(charge))
-  {
-    chargeSign<-NA
-      if(mode=="pos"){chargeSign<-"+"}else{chargeSign<-"-"}
-    tmpAdduct<-tmpAdduct[tmpAdduct[,"Charge"]==paste(charge,chargeSign,sep=""),]
-  }
-  if(!is.na(adduct))
-  {
-    
-    tmpAdduct<-tmpAdduct[tmpAdduct[,"Ion.name"]%in%adduct,]
-  }
   
-  if(nrow(tmpAdduct)==0){
-    warning("Not found! Reporting all possible adducts")
-    tmpAdduct<-adductsFile
+  Ion.name.neg<-c("M-3H",
+                 "M-2H",
+                 "M-H2O-H",
+                 "M-H",
+                 "M+Na-2H",
+                 "M+Cl",
+                 "M+K-2H",
+                 "M+FA-H",
+                 "M+Hac-H",
+                 "M+Br",
+                 "M+TFA-H",
+                 "2M-H",
+                 "2M+FA-H",
+                 "2M+Hac-H",
+                 "3M-H")
+  
+  Ion.mass.neg<-c("M/3 - 1.007276",
+    "M/2 - 1.007276",
+    "M - 19.01839",
+    "M - 1.007276",
+    "M + 20.974666",
+    "M + 34.969402",
+    "M + 36.948606",
+    "M + 44.998201",
+    "M + 59.013851",
+    "M + 78.918885",
+    "M + 112.985586",
+    "2M - 1.007276",
+    "2M + 44.998201",
+    "2M + 59.013851",
+    "3M - 1.007276")
+  
+  Charge.neg<-c("3-",
+    "2-",
+    "1-",
+    "1-",
+    "1-",
+    "1-",
+    "1-",
+    "1-",
+    "1-",
+    "1-",
+    "1-",
+    "1-",
+    "1-",
+    "1-",
+    "1-")
+  
+  
+  adductsFile.pos<-data.frame(Ion.name=Ion.name.pos,Ion.mass=Ion.mass.pos,Charge=Charge.pos)
+  adductsFile.neg<-data.frame(Ion.name=Ion.name.neg,Ion.mass=Ion.mass.neg,Charge=Charge.neg)
+
+  
+
+  if(tolower(mode)%in%c("pos","positive","p"))
+  {
+    tmpAdduct<-adductsFile.pos
+    if(!is.na(charge) & is.numeric(charge))
+    {
+      chargeSign<-NA
+     chargeSign<-"+"
+      tmpAdduct<-tmpAdduct[tmpAdduct[,"Charge"]==paste(charge,chargeSign,sep=""),]
     }
-  signs<-sapply(str_extract(as.character(tmpAdduct[,"Ion.mass"]),"\\+|\\-"),function(x){x[[1]]})
-  signs[signs=="+"]=1
-  signs[signs=="-"]=-1
-  result<-(mz*as.numeric(tmpAdduct[,"Charge"]))-
-    (as.numeric(signs)*
-       as.numeric(sapply(strsplit(as.character(tmpAdduct[,"Ion.mass"]),"\\+|\\-"),function(x){x[[2]]})))
+    if(!is.na(adduct))
+    {
+      
+      tmpAdduct<-tmpAdduct[tmpAdduct[,"Ion.name"]%in%adduct,]
+    }
+    
+    if(nrow(tmpAdduct)==0){
+      warning("Not found! Reporting all possible adducts")
+      tmpAdduct<-adductsFile
+    }
+    signs<-sapply(str_extract(as.character(tmpAdduct[,"Ion.mass"]),"\\+|\\-"),function(x){x[[1]]})
+    signs[signs=="+"]=-1
+    signs[signs=="-"]=+1
+    mzCoefficients<-
+      str_extract(sapply(strsplit(as.character(tmpAdduct[,"Ion.mass"]),split = "\\+|\\-"),function(x){x[1]}),
+                  "\\d+")
+    
+    mzCoefficients[is.na(mzCoefficients)]<-1
+    mzCoefficients<-as.numeric(mzCoefficients)
+    mzCoefficients[!grepl("/",as.character(tmpAdduct[,"Ion.mass"]),fixed=T)]<-
+      1/ mzCoefficients[!grepl("/",as.character(tmpAdduct[,"Ion.mass"]),fixed=T)]
+    
+    result<- mz+  (as.numeric(signs)*
+            as.numeric(sapply(strsplit(as.character(tmpAdduct[,"Ion.mass"]),"\\+|\\-"),function(x){x[[2]]})))
+
+    result<- result*mzCoefficients
+  }else if(tolower(mode)%in%c("neg","negative","n"))
+  {
+    tmpAdduct<-adductsFile.neg
+    if(!is.na(charge) & is.numeric(charge))
+    {
+      chargeSign<-NA
+     chargeSign<-"-"
+      tmpAdduct<-tmpAdduct[tmpAdduct[,"Charge"]==paste(charge,chargeSign,sep=""),]
+    }
+    if(!is.na(adduct))
+    {
+      
+      tmpAdduct<-tmpAdduct[tmpAdduct[,"Ion.name"]%in%adduct,]
+    }
+    
+    if(nrow(tmpAdduct)==0){
+      warning("Not found! Reporting all possible adducts")
+      tmpAdduct<-adductsFile
+    }
+    signs<-sapply(str_extract(as.character(tmpAdduct[,"Ion.mass"]),"\\+|\\-"),function(x){x[[1]]})
+    signs[signs=="+"]=-1
+    signs[signs=="-"]=+1
+    mzCoefficients<-
+      str_extract(sapply(strsplit(as.character(tmpAdduct[,"Ion.mass"]),split = "\\+|\\-"),function(x){x[1]}),
+                  "\\d+")
+    
+    mzCoefficients[is.na(mzCoefficients)]<-1
+    mzCoefficients<-as.numeric(mzCoefficients)
+    mzCoefficients[!grepl("/",as.character(tmpAdduct[,"Ion.mass"]),fixed=T)]<-
+      1/ mzCoefficients[!grepl("/",as.character(tmpAdduct[,"Ion.mass"]),fixed=T)]
+    
+    result<- mz+  (as.numeric(signs)*
+                     as.numeric(sapply(strsplit(as.character(tmpAdduct[,"Ion.mass"]),"\\+|\\-"),function(x){x[[2]]})))
+    result<- result*mzCoefficients
+    
+  }else 
+  {
+    stop("Incorrect mode! Mode has to be either positive or negative!")
+  }
+ 
   
 return(data.frame(correctedMS=result,adductName=tmpAdduct[,"Ion.name"]))
   
