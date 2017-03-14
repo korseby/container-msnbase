@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 
 adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA)
 {
