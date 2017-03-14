@@ -4,7 +4,7 @@ options(stringAsfactors = FALSE, useFancyQuotes = FALSE)
 # Taking the command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 
-if(length(args)==0)stop("No file has been specified! Please select a file for performing peak picking!\n")
+if(length(args)==0)stop("No parameters are given!\n")
 require(MSnbase)
 RawFiles<-NA
 output<-NA
