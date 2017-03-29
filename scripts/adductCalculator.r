@@ -175,7 +175,7 @@ adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA)
     
     if(nrow(tmpAdduct)==0){
       warning("Not found! Reporting all possible adducts")
-      tmpAdduct<-adductsFile
+      tmpAdduct<-adductsFile.pos
     }
     signs<-sapply(str_extract(as.character(tmpAdduct[,"Ion.mass"]),"\\+|\\-"),function(x){x[[1]]})
     signs[signs=="+"]=-1
@@ -210,7 +210,7 @@ adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA)
     
     if(nrow(tmpAdduct)==0){
       warning("Not found! Reporting all possible adducts")
-      tmpAdduct<-adductsFile
+      tmpAdduct<-adductsFile.neg
     }
     signs<-sapply(str_extract(as.character(tmpAdduct[,"Ion.mass"]),"\\+|\\-"),function(x){x[[1]]})
     signs[signs=="+"]=-1
