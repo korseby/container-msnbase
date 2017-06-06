@@ -26,7 +26,7 @@ toMetfragCommand<-function(mappedMS2=NA,
                            searchMultipleChargeAdducts=F,
                            includeUnmapped=T,includeMapped=T,
                            settingsObject=list(),preprocess=NA,savePath="",minPeaks=0,maxSpectra=NA,
-			   maxPrecursorMass = NA, minPrecursorMass = NA)
+			   maxPrecursorMass = NA, minPrecursorMass = NA, _mode = "pos")
 {
   peakList<-getPeaklist(cameraObject)
   numberSpectraWritten <- 0
@@ -129,13 +129,16 @@ toMetfragCommand<-function(mappedMS2=NA,
         {
           settingsObject[["NeutralPrecursorMass"]]<-neutralMASS
           settingsObject[["PeakList"]]<-MS2
+          settingsObject[["IsPositiveIonMode"]]<-"True"
+          if(_mode == "neg") {settingsObject[["IsPositiveIonMode"]]<-"False"}
+	  settingsObject[["PrecursorIonMode"]]<-adduct
           fileName<-""
           fileName<-paste(as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
-         if(savePath!="")
-          fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
-         if(!is.na(maxPrecursorMass) & maxPrecursorMass < neutralMASS) { next }
-         if(!is.na(minPrecursorMass) & minPrecursorMass > neutralMASS) { next }
-	 if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
+          if(savePath!="")
+           fileName<-paste(savePath,"/",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
+          if(!is.na(maxPrecursorMass) & maxPrecursorMass < neutralMASS) { next }
+          if(!is.na(minPrecursorMass) & minPrecursorMass > neutralMASS) { next }
+	  if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
          	parameterToCommand(settingsObject,fileName)
 	 	numberSpectraWritten<-numberSpectraWritten+1
 	 }
@@ -144,12 +147,17 @@ toMetfragCommand<-function(mappedMS2=NA,
           
           allChargesHits<-list()
           allAdductForSearch<-adductCalculator(mz = neutralMASS,charge = seachCharge,
-                                               adduct = gsub("\\[|\\]","",seachAdducts),mode = "pos")
+                                               adduct = gsub("\\[|\\]","",seachAdducts),mode = _mode)
           for(k in 1:nrow(allAdductForSearch))
           {
             mass <- allAdductForSearch[k,"correctedMS"]
             settingsObject[["NeutralPrecursorMass"]]<-mass
             settingsObject[["PeakList"]]<-MS2
+            settingsObject[["IsPositiveIonMode"]]<-"True"
+            if(_mode == "neg") {settingsObject[["IsPositiveIonMode"]]<-"False"}
+            modeSuffix<-"+"
+            if(_mode == "neg") {modeSuffix<-"-"}
+            settingsObject[["PrecursorIonMode"]]<-paste("[",as.character(allAdductForSearch[k,"adductName"]),"]", modeSuffix, sep="")
             fileName<-""
             fileName<-paste(as.character(MSMS@rt),"_",as.character(round(mass,4)),"_",as.character(runif(1)),".txt",sep="")
             if(savePath!="")
@@ -191,6 +199,9 @@ toMetfragCommand<-function(mappedMS2=NA,
       {
         settingsObject[["NeutralPrecursorMass"]]<-neutralMASS
         settingsObject[["PeakList"]]<-MS2
+	settingsObject[["IsPositiveIonMode"]]<-"True"
+        if(_mode == "neg") {settingsObject[["IsPositiveIonMode"]]<-"False"}
+	settingsObject[["PrecursorIonMode"]]<-adduct
         fileName<-""
         fileName<-paste(as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
         if(savePath!="")
@@ -205,12 +216,17 @@ toMetfragCommand<-function(mappedMS2=NA,
       {
         allChargesHits<-list()
         allAdductForSearch<-adductCalculator(mz = neutralMASS,charge = NA,
-                                             adduct = NA,mode = "pos")
+                                             adduct = NA,mode = _mode)
         for(k in 1:nrow(allAdductForSearch))
         {
           mass <- allAdductForSearch[k,"correctedMS"]
           settingsObject[["NeutralPrecursorMass"]]<-mass
           settingsObject[["PeakList"]]<-MS2
+	  settingsObject[["IsPositiveIonMode"]]<-"True"
+	  if(_mode == "neg") {settingsObject[["IsPositiveIonMode"]]<-"False"}
+	  modeSuffix<-"+"
+	  if(_mode == "neg") {modeSuffix<-"-"}
+	  settingsObject[["PrecursorIonMode"]]<-paste("[",as.character(allAdductForSearch[k,"adductName"]),"]", modeSuffix, sep="")
           fileName<-""
           fileName<-paste(as.character(MSMS@rt),"_",as.character(round(mass,4)),"_",as.character(runif(1)),".txt",sep="")
           if(savePath!="")

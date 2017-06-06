@@ -18,6 +18,8 @@ precursortppm<-10
 fragmentppm<-10
 fragmentabs<-0.01
 database<-"KEGG"
+mode<-"pos"
+
 for(arg in args)
 {
   argCase<-strsplit(x = arg,split = "=")[[1]][1]
@@ -86,7 +88,12 @@ for(arg in args)
   if(argCase=="output")
   {
     output=as.character(value)
+  }  
+  if(argCase=="mode")
+  {
+    mode=as.character(value)
   }
+
 }
 
 if(is.na(inputMS2) | is.na(inputCamera) | is.na(output)) stop("Both input (CAMERA and MS2) and output need to be specified!\n")
@@ -109,4 +116,4 @@ library(stringr)
 toMetfragCommand(mappedMS2 = MappedMS2s$mapped,unmappedMS2 = MappedMS2s$unmapped,
                  cameraObject = cameraObject,searchMultipleChargeAdducts = T,includeUnmapped = F,
                  includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=output, minPeaks=minPeaks, 
-		 maxSpectra=maxSpectra, maxPrecursorMass = maxPrecursorMass, minPrecursorMass = minPrecursorMass)
+		 maxSpectra=maxSpectra, maxPrecursorMass = maxPrecursorMass, minPrecursorMass = minPrecursorMass, mode = mode)
