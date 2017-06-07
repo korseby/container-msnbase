@@ -169,7 +169,7 @@ adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA, primary = T)
   if(tolower(mode)%in%c("pos","positive","p"))
   {
     # select the adducts (primary or extended)
-    tmpAdduct<-adductsFile.pos[!(Extended.pos & primary)]
+    tmpAdduct<-adductsFile.pos
     if(!is.na(charge) & is.numeric(charge))
     {
       chargeSign<-NA
