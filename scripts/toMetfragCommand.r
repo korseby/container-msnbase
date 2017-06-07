@@ -131,7 +131,7 @@ toMetfragCommand<-function(mappedMS2=NA,
           settingsObject[["PeakList"]]<-MS2
           settingsObject[["IsPositiveIonMode"]]<-"True"
           if(mode_ == "neg") {settingsObject[["IsPositiveIonMode"]]<-"False"}
-	  settingsObject[["PrecursorIonMode"]]<-adduct
+	  settingsObject[["PrecursorIonType"]]<-adduct
           fileName<-""
           fileName<-paste(as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
           if(savePath!="")
@@ -157,7 +157,7 @@ toMetfragCommand<-function(mappedMS2=NA,
             if(mode_ == "neg") {settingsObject[["IsPositiveIonMode"]]<-"False"}
             modeSuffix<-"+"
             if(mode_ == "neg") {modeSuffix<-"-"}
-            settingsObject[["PrecursorIonMode"]]<-paste("[",as.character(allAdductForSearch[k,"adductName"]),"]", modeSuffix, sep="")
+            settingsObject[["PrecursorIonType"]]<-paste("[",as.character(allAdductForSearch[k,"adductName"]),"]", modeSuffix, sep="")
             fileName<-""
             fileName<-paste(as.character(MSMS@rt),"_",as.character(round(mass,4)),"_",as.character(runif(1)),".txt",sep="")
             if(savePath!="")
@@ -201,7 +201,7 @@ toMetfragCommand<-function(mappedMS2=NA,
         settingsObject[["PeakList"]]<-MS2
 	settingsObject[["IsPositiveIonMode"]]<-"True"
         if(mode_ == "neg") {settingsObject[["IsPositiveIonMode"]]<-"False"}
-	settingsObject[["PrecursorIonMode"]]<-adduct
+	settingsObject[["PrecursorIonType"]]<-adduct
         fileName<-""
         fileName<-paste(as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
         if(savePath!="")
@@ -226,7 +226,7 @@ toMetfragCommand<-function(mappedMS2=NA,
 	  if(mode_ == "neg") {settingsObject[["IsPositiveIonMode"]]<-"False"}
 	  modeSuffix<-"+"
 	  if(mode_ == "neg") {modeSuffix<-"-"}
-	  settingsObject[["PrecursorIonMode"]]<-paste("[",as.character(allAdductForSearch[k,"adductName"]),"]", modeSuffix, sep="")
+	  settingsObject[["PrecursorIonType"]]<-paste("[",as.character(allAdductForSearch[k,"adductName"]),"]", modeSuffix, sep="")
           fileName<-""
           fileName<-paste(as.character(MSMS@rt),"_",as.character(round(mass,4)),"_",as.character(runif(1)),".txt",sep="")
           if(savePath!="")
