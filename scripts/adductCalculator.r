@@ -164,8 +164,6 @@ adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA, primary = T)
 	Ion.mass=Ion.mass.neg[!(Extended.neg & primary)],
 	Charge=Charge.neg[!(Extended.neg & primary)])
 
-  
-
   if(tolower(mode)%in%c("pos","positive","p"))
   {
     # select the adducts (primary or extended)
@@ -173,7 +171,7 @@ adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA, primary = T)
     if(!is.na(charge) & is.numeric(charge))
     {
       chargeSign<-NA
-     chargeSign<-"+"
+      chargeSign<-"+"
       tmpAdduct<-tmpAdduct[tmpAdduct[,"Charge"]==paste(charge,chargeSign,sep=""),]
     }
     if(!is.na(adduct))

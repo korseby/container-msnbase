@@ -1,5 +1,10 @@
 #!/usr/bin/env Rscript
 
+validate.adduct <- function(adduct) {
+    if(adduct == "[M+H+NH3]+") {return("[M+NH4]+")}
+    return (adduct)
+}
+
 parameterToCommand<-function(param,outputName="")
 {
   param$MetFragPeakListReader<-"de.ipbhalle.metfraglib.peaklistreader.FilteredStringTandemMassPeakListReader"
@@ -105,8 +110,7 @@ toMetfragCommand<-function(mappedMS2=NA,
       if(class(mappedMS2[[x]])=="list")
       {
         mappedMS2TMP<-mappedMS2[[x]]
-      }
-      else if(class(mappedMS2[[x]])=="Spectrum2")
+      } else if(class(mappedMS2[[x]])=="Spectrum2")
       {
         mappedMS2TMP<-list(mappedMS2[[x]])
       }
@@ -131,7 +135,9 @@ toMetfragCommand<-function(mappedMS2=NA,
           settingsObject[["PeakList"]]<-MS2
           settingsObject[["IsPositiveIonMode"]]<-"True"
           if(mode_ == "neg") {settingsObject[["IsPositiveIonMode"]]<-"False"}
-	  settingsObject[["PrecursorIonType"]]<-adduct
+            modeSuffix<-"+"
+          if(mode_ == "neg") {modeSuffix<-"-"}
+	  settingsObject[["PrecursorIonType"]]<-validate.adduct(adduct)
           fileName<-""
           fileName<-paste(as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(runif(1)),".txt",sep="")
           if(savePath!="")
@@ -157,7 +163,7 @@ toMetfragCommand<-function(mappedMS2=NA,
             if(mode_ == "neg") {settingsObject[["IsPositiveIonMode"]]<-"False"}
             modeSuffix<-"+"
             if(mode_ == "neg") {modeSuffix<-"-"}
-            settingsObject[["PrecursorIonType"]]<-paste("[",as.character(allAdductForSearch[k,"adductName"]),"]", modeSuffix, sep="")
+            settingsObject[["PrecursorIonType"]]<-paste("[",validate.adduct(as.character(allAdductForSearch[k,"adductName"])),"]", modeSuffix, sep="")
             fileName<-""
             fileName<-paste(as.character(MSMS@rt),"_",as.character(round(mass,4)),"_",as.character(runif(1)),".txt",sep="")
             if(savePath!="")
