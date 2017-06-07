@@ -26,7 +26,7 @@ toMetfragCommand<-function(mappedMS2=NA,
                            searchMultipleChargeAdducts=F,
                            includeUnmapped=T,includeMapped=T,
                            settingsObject=list(),preprocess=NA,savePath="",minPeaks=0,maxSpectra=NA,
-			   maxPrecursorMass = NA, minPrecursorMass = NA, mode_ = "pos")
+			   maxPrecursorMass = NA, minPrecursorMass = NA, mode_ = "pos", primary = T)
 {
   peakList<-getPeaklist(cameraObject)
   numberSpectraWritten <- 0
@@ -147,7 +147,7 @@ toMetfragCommand<-function(mappedMS2=NA,
           
           allChargesHits<-list()
           allAdductForSearch<-adductCalculator(mz = neutralMASS,charge = seachCharge,
-                                               adduct = gsub("\\[|\\]","",seachAdducts),mode = mode_)
+                                               adduct = gsub("\\[|\\]","",seachAdducts),mode = mode_,primary = primary)
           for(k in 1:nrow(allAdductForSearch))
           {
             mass <- allAdductForSearch[k,"correctedMS"]
@@ -216,7 +216,7 @@ toMetfragCommand<-function(mappedMS2=NA,
       {
         allChargesHits<-list()
         allAdductForSearch<-adductCalculator(mz = neutralMASS,charge = NA,
-                                             adduct = NA,mode = mode_)
+                                             adduct = NA,mode = mode_, primary = primary)
         for(k in 1:nrow(allAdductForSearch))
         {
           mass <- allAdductForSearch[k,"correctedMS"]

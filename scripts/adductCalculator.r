@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA)
+adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA, primary = T)
 {
   if(is.na(mz))stop("Provide the mz!")
   if(is.na(mode))stop("Provide the polarity!")
@@ -103,7 +103,8 @@ adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA)
     "1+",
     "1+")
   
-  
+  Extended.pos<-c(T,T,T,T,T,T,T,T,T,T,T,T,F,F,F,T,F,T,T,T,T,T,T,T,T,T,T,T,T,T,T) 
+ 
   Ion.name.neg<-c("M-3H",
                  "M-2H",
                  "M-H2O-H",
@@ -151,16 +152,24 @@ adductCalculator<-function(mz=NA,charge=NA,mode="pos",adduct=NA)
     "1-",
     "1-",
     "1-")
+
+  Extended.neg<-c(T,T,T,F,F,F,F,T,T,T,T,T,T,T,T)
   
-  
-  adductsFile.pos<-data.frame(Ion.name=Ion.name.pos,Ion.mass=Ion.mass.pos,Charge=Charge.pos)
-  adductsFile.neg<-data.frame(Ion.name=Ion.name.neg,Ion.mass=Ion.mass.neg,Charge=Charge.neg)
+  adductsFile.pos<-data.frame(
+	Ion.name=Ion.name.pos[!(Extended.pos & primary)],
+	Ion.mass=Ion.mass.pos[!(Extended.pos & primary)],
+	Charge=Charge.pos[!(Extended.pos & primary)])
+  adductsFile.neg<-data.frame(
+	Ion.name=Ion.name.neg[!(Extended.neg & primary)],
+	Ion.mass=Ion.mass.neg[!(Extended.neg & primary)],
+	Charge=Charge.neg[!(Extended.neg & primary)])
 
   
 
   if(tolower(mode)%in%c("pos","positive","p"))
   {
-    tmpAdduct<-adductsFile.pos
+    # select the adducts (primary or extended)
+    tmpAdduct<-adductsFile.pos[!(Extended.pos & primary)]
     if(!is.na(charge) & is.numeric(charge))
     {
       chargeSign<-NA

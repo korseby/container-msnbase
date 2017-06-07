@@ -19,6 +19,7 @@ fragmentppm<-10
 fragmentabs<-0.01
 database<-"KEGG"
 mode<-"pos"
+adductRules<-"primary"
 
 for(arg in args)
 {
@@ -93,6 +94,10 @@ for(arg in args)
   {
     mode=as.character(value)
   }
+  if(argCase=="adductRules")
+  {
+    adductRules=as.character(value)
+  }
 
 }
 
@@ -116,4 +121,4 @@ library(stringr)
 toMetfragCommand(mappedMS2 = MappedMS2s$mapped,unmappedMS2 = MappedMS2s$unmapped,
                  cameraObject = cameraObject,searchMultipleChargeAdducts = T,includeUnmapped = F,
                  includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=output, minPeaks=minPeaks, 
-		 maxSpectra=maxSpectra, maxPrecursorMass = maxPrecursorMass, minPrecursorMass = minPrecursorMass, mode = mode)
+		 maxSpectra=maxSpectra, maxPrecursorMass = maxPrecursorMass, minPrecursorMass = minPrecursorMass, mode = mode, primary = (adductRules == "primary"))
