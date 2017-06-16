@@ -159,7 +159,7 @@ toMetfragCommand<-function(mappedMS2=NA,
 		fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(intb),"_",file.origin,".txt",sep="")
           }
           if(savePath!="")
-           fileName<-paste(savePath,"/",filename,sep="")
+           fileName<-paste(savePath,"/",fileName,sep="")
           if(!is.na(maxPrecursorMass) & maxPrecursorMass < neutralMASS) { next }
           if(!is.na(minPrecursorMass) & minPrecursorMass > neutralMASS) { next }
 	  if(is.na(maxSpectra) || maxSpectra > numberSpectraWritten) {
