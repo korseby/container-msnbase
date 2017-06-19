@@ -25,7 +25,12 @@ RUN apt-get -y clean && apt-get -y autoremove && rm -rf /var/lib/{cache,log}/ /t
 
 # Add scripts folder to container
 ADD scripts/*.r /usr/local/bin/
+# Add files for testing
+ADD testfiles/ /testfiles/
+ADD runTest1.sh /usr/local/bin/
+
 RUN chmod +x /usr/local/bin/*.r
+RUN chmod +x /usr/local/bin/runTest1.sh
 
 # Define Entry point script
 #ENTRYPOINT [ "Rscript" ]
