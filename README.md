@@ -54,11 +54,11 @@ Sebastian Gibb
 ## Installation 
 
 ```bash
-docker build -t container-MSnbase .
+docker build -t msnbase .
 ```
 Alternatively, pull from repo:
 ```bash
-docker pull container-registry.phenomenal-h2020.eu/phnmnl/container-MSnbase
+docker pull container-registry.phenomenal-h2020.eu/phnmnl/msnbase
 ```
 
 ## Usage Instructions
