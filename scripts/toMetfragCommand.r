@@ -154,9 +154,9 @@ toMetfragCommand<-function(mappedMS2=NA,
           fileName<-""
           # add id, rt, neu_mass, intensity, orig file name
           if(file.origin == "") {
-		fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(intb),".txt",sep="")
+		fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(MSMS@precursorMz,4)),"_",as.character(intb),".txt",sep="")
 	  } else {
-		fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(intb),"_",file.origin,".txt",sep="")
+		fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(MSMS@precursorMz,4)),"_",as.character(intb),"_",file.origin,".txt",sep="")
           }
           if(savePath!="")
            fileName<-paste(savePath,"/",fileName,sep="")
@@ -184,9 +184,9 @@ toMetfragCommand<-function(mappedMS2=NA,
             settingsObject[["PrecursorIonType"]]<-paste("[",validate.adduct(as.character(allAdductForSearch[k,"adductName"])),"]", modeSuffix, sep="")
             fileName<-""
             if(file.origin == "") {
-                 fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(intb),".txt",sep="")
+                 fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(MSMS@precursorMz,4)),"_",as.character(intb),".txt",sep="")
             } else {
-                 fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(intb),"_",file.origin,".txt",sep="")
+                 fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(MSMS@precursorMz,4)),"_",as.character(intb),"_",file.origin,".txt",sep="")
             }
             if(savePath!="")
               fileName<-paste(savePath,"/",fileName,sep="")
@@ -232,9 +232,9 @@ toMetfragCommand<-function(mappedMS2=NA,
 	settingsObject[["PrecursorIonType"]]<-adduct
         fileName<-""
 	if(file.origin == "") {
-             fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(intb),".txt",sep="")
+             fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(MSMS@precursorMz,4)),"_",as.character(intb),".txt",sep="")
         } else {
-             fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(intb),"_",file.origin,".txt",sep="")
+             fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(MSMS@precursorMz,4)),"_",as.character(intb),"_",file.origin,".txt",sep="")
         }
         if(savePath!="")
           fileName<-paste(savePath,"/",fileName,sep="")
@@ -261,9 +261,9 @@ toMetfragCommand<-function(mappedMS2=NA,
 	  settingsObject[["PrecursorIonType"]]<-paste("[",as.character(allAdductForSearch[k,"adductName"]),"]", modeSuffix, sep="")
           fileName<-""
           if(file.origin == "") {
-             fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(intb),".txt",sep="")
+             fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(MSMS@precursorMz,4)),"_",as.character(intb),".txt",sep="")
           } else {
-             fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(neutralMASS,4)),"_",as.character(intb),"_",file.origin,".txt",sep="")
+             fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(MSMS@precursorMz,4)),"_",as.character(intb),"_",file.origin,".txt",sep="")
           }
           if(savePath!="")
             fileName<-paste(savePath,"/",fileName,sep="")

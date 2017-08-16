@@ -51,5 +51,16 @@ Sebastian Gibb
 
 - Gatto L, Lilley K (2012): MSnbase - an R/Bioconductor package for isobaric tagged mass spectrometry data visualization, processing and quantitation. Bioinformatics 28: 288-289.
 
+## Installation 
 
+```bash
+docker build -t msnbase .
+```
+Alternatively, pull from repo:
+```bash
+docker pull container-registry.phenomenal-h2020.eu/phnmnl/msnbase
+```
+
+## Usage Instructions
+On a PhenoMeNal Cloud Research Environment Galaxy environment, go to MS tool category or type msnbase-read-msms in the search tools text field, and then click on msnbase-read-msms and select a mzML file containing MS/MS information from the history, then press run.
 
