@@ -62,5 +62,6 @@ docker pull container-registry.phenomenal-h2020.eu/phnmnl/msnbase
 ```
 
 ## Usage Instructions
+
 On a PhenoMeNal Cloud Research Environment Galaxy environment, go to MS tool category or type msnbase-read-msms in the search tools text field, and then click on msnbase-read-msms and select a mzML file containing MS/MS information from the history, then press run.
 
