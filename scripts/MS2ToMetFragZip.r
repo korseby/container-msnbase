@@ -102,6 +102,7 @@ for(arg in args)
   {
     filetype=as.character(value)
   }
+
 }
 
 if(is.na(inputMS2) | is.na(inputCamera) | is.na(output)) stop("Both input (CAMERA and MS2) and output need to be specified!\n")
@@ -120,29 +121,25 @@ cameraObject<-get(varNameForNextStep)
 
 source("/usr/local/bin/adductCalculator.r")
 source("/usr/local/bin/toMetfragCommand.r")
-library(stringr)
+
 if(filetype=="zip")
 {
 directoryTMP<-"metfragTMP"
 dir.create("metfragTMP", showWarnings = FALSE)
 
 
+library(stringr)
 toMetfragCommand(mappedMS2 = MappedMS2s$mapped,unmappedMS2 = MappedMS2s$unmapped,
                  cameraObject = cameraObject,searchMultipleChargeAdducts = T,includeUnmapped = F,
                  includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=directoryTMP, minPeaks=minPeaks, 
 		 maxSpectra=maxSpectra, maxPrecursorMass = maxPrecursorMass, minPrecursorMass = minPrecursorMass, mode = mode, primary = (adductRules == "primary"))
 
+print(length(list.files("metfragTMP",full.names = TRUE)))
 
-setwd("metfragTMP")
+
 zip::zip(zipfile="mappedtometfrag.zip",files=list.files(pattern="txt"))
 
-res2<-file.copy(from ="mappedtometfrag.zip" ,to = paste("../",output,"/","mappedtometfrag.zip",sep=""),overwrite = T)
+res2<-file.copy(from ="mappedtometfrag.zip" ,to = paste(output,"/",mappedtometfrag.zip,sep=""),overwrite = T)
+}
 
-}
-if(filetype=="txt")
-{
-toMetfragCommand(mappedMS2 = MappedMS2s$mapped,unmappedMS2 = MappedMS2s$unmapped,
-                 cameraObject = cameraObject,searchMultipleChargeAdducts = T,includeUnmapped = F,
-                 includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=output, minPeaks=minPeaks, 
-		 maxSpectra=maxSpectra, maxPrecursorMass = maxPrecursorMass, minPrecursorMass = minPrecursorMass, mode = mode, primary = (adductRules == "primary"))
-}
+
