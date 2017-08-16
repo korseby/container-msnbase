@@ -4,7 +4,7 @@ MAINTAINER PhenoMeNal-H2020 Project (phenomenal-h2020-users@googlegroups.com)
 
 LABEL software=MSnbase
 LABEL software.version=2.0.2
-LABEL version=0.2
+LABEL version=0.3
 LABEL Description="MSnbase: Basic plotting, data manipulation and processing of MS-based Proteomics data."
 
 # Install packages for compilation
