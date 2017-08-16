@@ -5,7 +5,7 @@ options(stringAsfactors = FALSE, useFancyQuotes = FALSE)
 # Taking the command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 
-if(length(args)==0)stop("No file has been specified!")
+if(length(args)==0)stop("No files have been specified!")
 
 output<-NA
 appendTo<-NA
