@@ -11,7 +11,7 @@ output<-NA
 appendTo<-NA
 appendToName<-"realNames"
 cleanFileName=T
-filetype=NA
+filetype="txt"
 for(arg in args)
 {
   argCase<-strsplit(x = arg,split = "=")[[1]][1]

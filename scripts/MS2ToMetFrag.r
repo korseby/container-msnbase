@@ -20,7 +20,7 @@ fragmentabs<-0.01
 database<-"KEGG"
 mode<-"pos"
 adductRules<-"primary"
-filetype<-NA
+filetype<-"txt"
 for(arg in args)
 {
   argCase<-strsplit(x = arg,split = "=")[[1]][1]
