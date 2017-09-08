@@ -8,6 +8,7 @@ if(length(args)==0)stop("No parameters are given!\n")
 require(MSnbase)
 RawFiles<-NA
 output<-NA
+originalFileName<-""
 for(arg in args)
 {
   argCase<-strsplit(x = arg,split = "=")[[1]][1]
@@ -15,6 +16,10 @@ for(arg in args)
   if(argCase=="input")
   {
     RawFiles=as.character(value)
+  }
+  if(argCase=="inputname")
+  {
+    originalFileName=as.character(value)
   }
   if(argCase=="output")
   {
@@ -24,6 +29,8 @@ for(arg in args)
 }
 if(is.na(RawFiles) | is.na(output)) stop("Both input and output need to be specified!\n")
 MS2RawFile<-readMSData(RawFiles, msLevel = 2, verbose = FALSE)
+originalFileName<-gsub(pattern = "Galaxy.*-\\[|\\].*",replacement = "",x = originalFileName)
+attributes(MS2RawFile)$fileName<-originalFileName
 
 preprocessingStepsMS2<-c("MS2RawFile")
 varNameForNextStep<-as.character("MS2RawFile")

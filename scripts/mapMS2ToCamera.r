@@ -101,16 +101,19 @@ IntervalMerge<-function(cameraObject,MSMSdata, PlusTime,MinusTime,ppm,listOfMS2M
   for (i in 1:length(imatch)) {
     for(j in imatch[[i]])
     {
-      
+      MSMStmpObject<-MSMSdata[[i]]
+      attributes(MSMStmpObject)$fileName<-attributes(MSMSdata)$fileName
       listOfMS2Mapped[[as.character(j)]]<-
-        c(listOfMS2Mapped[[as.character(j)]],MSMSdata[[i]])
+        c(listOfMS2Mapped[[as.character(j)]],MSMStmpObject)
     }
   }
   for (i in 1:length(imatch)) {
     
     if(length(imatch[[i]])==0)
     {
-      listOfUnMapped<-c(listOfUnMapped,MSMSdata[[i]])
+      MSMStmpObject<-MSMSdata[[i]]
+      attributes(MSMStmpObject)$fileName<-attributes(MSMSdata)$fileName
+      listOfUnMapped<-c(listOfUnMapped,MSMStmpObject)
     }
   }
   return(list(mapped=listOfMS2Mapped,unmapped=listOfUnMapped))

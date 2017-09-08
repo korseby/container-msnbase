@@ -37,15 +37,16 @@ toMetfragCommand<-function(mappedMS2=NA,
 {
   peakList<-getPeaklist(cameraObject)
   # get original file name
-  file.origin <- tryCatch({
-    attributes(attributes(attributes(cameraObject)[["xcmsSet"]])[[".processHistory"]][[1]])[["origin"]]
-  }, warning = function(war) {
-     file.origin <- ""	
-  }, error = function(err) {
-     file.origin <- ""
-  }, finally={
-  })
-  if(is.null(file.origin)) {file.origin <- ""}
+  #file.origin <- tryCatch({
+  #  attributes(attributes(attributes(cameraObject)[["xcmsSet"]])[[".processHistory"]][[1]])[["origin"]]
+  #}, warning = function(war) {
+  #   file.origin <- ""	
+  #}, error = function(err) {
+  #   file.origin <- ""
+  #}, finally={
+  #})
+  #if(is.null(file.origin)) {file.origin <- ""}
+  file.origin<-""
   numberSpectraWritten <- 0
   if(includeMapped==T)
   {
@@ -153,6 +154,7 @@ toMetfragCommand<-function(mappedMS2=NA,
 	  settingsObject[["PrecursorIonType"]]<-validate.adduct(adduct)
           fileName<-""
           # add id, rt, neu_mass, intensity, orig file name
+	  file.origin<-attributes(MSMS)$fileName
           if(file.origin == "") {
 		fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(MSMS@precursorMz,4)),"_",as.character(intb),".txt",sep="")
 	  } else {
@@ -183,6 +185,7 @@ toMetfragCommand<-function(mappedMS2=NA,
             if(mode == "neg") {modeSuffix<-"-"}
             settingsObject[["PrecursorIonType"]]<-paste("[",validate.adduct(as.character(allAdductForSearch[k,"adductName"])),"]", modeSuffix, sep="")
             fileName<-""
+            file.origin<-attributes(MSMS)$fileName
             if(file.origin == "") {
                  fileName<-paste(as.character(numberSpectraWritten+1),"_",as.character(MSMS@rt),"_",as.character(round(MSMS@precursorMz,4)),"_",as.character(intb),".txt",sep="")
             } else {
