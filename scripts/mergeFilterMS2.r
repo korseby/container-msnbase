@@ -80,7 +80,6 @@ MSMSdata<-get(varNameForNextStep)
 originalFileName<-attributes(MSMSdata)$fileName
 # merge and filter spectra
 MS2RawFile <- merge.spectra(MSMSdata, mzabs, mzppm, rtabs, max.rt.range, max.mz.range, min.rt, max.rt, min.mz, max.mz, msms.intensity.threshold)
-MS2RawFile <- readMSData(RawFiles, msLevel = 2, verbose = FALSE)
 attributes(MS2RawFile)$fileName <- originalFileName
 
 preprocessingStepsMS2<-c("MS2RawFile")
