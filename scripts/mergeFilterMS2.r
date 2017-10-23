@@ -71,7 +71,7 @@ for(arg in args)
     output=as.character(value)
   }
 }
-if(is.na(msnbaserdata) | is.na(outout)) stop("Both input and output need to be specified!\n")
+if(is.na(msnbaserdata) | is.na(output)) stop("Both input and output need to be specified!\n")
 library(xcms)
 library(MSnbase)
 source("/usr/local/bin/functionsMergeFilterMS2.r")
