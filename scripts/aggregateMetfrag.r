@@ -83,8 +83,7 @@ for(i in 1:length(inputs))
 }
 
 
-write.table(x = allMS2IDs,file = output,
-            row.names = F,quote = F,sep = "\t")
+write.csv(x = allMS2IDs,file = output)
 
 
 
