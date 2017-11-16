@@ -9,11 +9,11 @@ validate.adduct <- function(adduct) {
 
 parameterToCommand<-function(param,outputName="")
 {
-  param$MetFragPeakListReader<-"de.ipbhalle.metfraglib.peaklistreader.FilteredStringTandemMassPeakListReader"
-  param$MetFragCandidateWriter<-"CSV"
-  param$PeakListString<-paste(apply(param$PeakList,1,paste,collapse="_"),collapse = ";")
-  param$SampleName<-outputName
-  param[[which(names(param)=="PeakList")]]<-NULL
+ param$MetFragPeakListReader<-"de.ipbhalle.metfraglib.peaklistreader.FilteredStringTandemMassPeakListReader"
+ param$MetFragCandidateWriter<-"CSV"
+ param$PeakListString<-paste(apply(param$PeakList,1,paste,collapse="_"),collapse = ";")
+ param$SampleName<-outputName
+ param[[which(names(param)=="PeakList")]]<-NULL
 
  param$MetFragDatabaseType
  toOutput<-""
@@ -23,7 +23,7 @@ parameterToCommand<-function(param,outputName="")
    } else {toOutput<- paste(toOutput," ",names(param)[i],"=",param[[i]],sep="")}
  }
  ### the output is specid_rt_mz_intensity[_origfilename]. specid is an enumerative number and origfilename is read from the original mzml file if included
- cat(toOutput,file = outputName)
+ cat(toOutput, file = outputName, sep="\n")
 }
 require(CAMERA)
 require(stringr)
