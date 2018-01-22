@@ -69,19 +69,21 @@ for(i in 1:length(inputs))
   if(info$size!=0 & !is.na(info$size))
   {
     tmpFile<-read.csv(inputs[i])
-    
+    # check if the file has any IDs
+    if(nrow(tmpFile)>0)
+      {
     # Extract mz and rt from the real file names
     rt<-as.numeric(strsplit(x = realNamesTMP[i],split = "_",fixed = T)[[1]][2])
     mz<-as.numeric(strsplit(x = realNamesTMP[i],split = "_",fixed = T)[[1]][3])
 
     allMS2IDs<-rbind(allMS2IDs,data.frame(parentMZ=mz,parentRT=rt,tmpFile))
+      }
   }
 
 }
 
 
-write.table(x = allMS2IDs,file = output,
-            row.names = F,quote = F,sep = "\t")
+write.csv(x = allMS2IDs,file = output)
 
 
 

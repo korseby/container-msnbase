@@ -21,6 +21,8 @@ database<-"KEGG"
 mode<-"pos"
 adductRules<-"primary"
 filetype<-"txt"
+outputMerge=F
+outputname=""
 for(arg in args)
 {
   argCase<-strsplit(x = arg,split = "=")[[1]][1]
@@ -102,6 +104,14 @@ for(arg in args)
   {
     filetype=as.character(value)
   }
+  if(argCase=="outputmerge")
+  {
+    outputMerge=as.logical(value)
+  }
+  if(argCase=="outputname")
+  {
+    outputname=as.character(value)
+  }
 }
 
 if(is.na(inputMS2) | is.na(inputCamera) | is.na(output)) stop("Both input (CAMERA and MS2) and output need to be specified!\n")
@@ -145,4 +155,27 @@ toMetfragCommand(mappedMS2 = MappedMS2s$mapped,unmappedMS2 = MappedMS2s$unmapped
                  cameraObject = cameraObject,searchMultipleChargeAdducts = T,includeUnmapped = F,
                  includeMapped = T,settingsObject = settingsObject,preprocess = F,savePath=output, minPeaks=minPeaks, 
 		 maxSpectra=maxSpectra, maxPrecursorMass = maxPrecursorMass, minPrecursorMass = minPrecursorMass, mode = mode, primary = (adductRules == "primary"))
+}
+
+readFileToDataframe<-function(x)
+{
+  splitT<-strsplit(x,"_",fixed = T)[[1]]
+  rt<-splitT[2]
+  mz<-splitT[3]
+  metfragParams<-readLines(x)
+  fileName<-paste(splitT[5:length(splitT)],collapse = "_")
+  return(data.frame(fileContent=metfragParams,mz=mz,rt=rt,filename=fileName))
+
+}
+
+
+if(outputMerge)
+{
+library(data.table)
+outputfilestmp<-list.files(output)
+listOfMS2s <- lapply(paste(output,"/",outputfilestmp,sep=""), readFileToDataframe)
+dataframeOfMS2s <- rbindlist( listOfMS2s )
+mergedParameters<-paste(dataframeOfMS2s$fileContent,sep="\n")
+writeLines(mergedParameters,outputname)
+
 }
