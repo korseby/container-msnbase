@@ -6,7 +6,9 @@ Basic plotting, data manipulation and processing of MS-based Proteomics data.
 
 ## Description
 
-MSnbase aims are providing a reproducible research framework to proteomics data analysis. It should allow researcher to easily mine mass spectrometry data, explore the data and its statistical properties and visually display these.
+MSnbase provides infrastructure for manipulation, processing and visualisation of mass spectrometry and proteomics data, ranging from raw to quantitative and annotated data.
+
+MSnbase aims to provide a reproducible research framework for proteomics data analysis. It should allow researchers to easily mine mass spectrometry data, explore the data and its statistical properties and visually display these.
 
 MSnbase also aims at being compatible with the infrastructure implemented in Bioconductor, in particular Biobase. As such, classes developed specifically for proteomics mass spectrometry data are based on the eSet and ExpressionSet classes. The main goal is to assure seamless compatibility with existing meta data structure, accessor methods and normalisation techniques.
 

@@ -7,7 +7,7 @@ merge.spectra.group <- function(spectra, eppm, eabs, int.threshold) {
   mean.precursor.mz <- 0
   max.tic <- -1
   tandemms <- lapply(1:length(spectra), function(index) {
-   # print(index)
+    # print(index)
     x<-spectra[[index]]
     # assign local variables
     cur.rt <- attributes(x)$rt
@@ -30,14 +30,21 @@ merge.spectra.group <- function(spectra, eppm, eabs, int.threshold) {
   })
   mean.precursor.mz <- mean.precursor.mz / length(spectra)
   
+  # Filter intensity
+  tandemms <- lapply(tandemms, function(spec) spec[spec[,"intensity"]>=int.threshold,])
+  tandemrm <- sapply(1:length(tandemms), function(x) { if ( (dim(tandemms[[x]])[1] == 0) || is.null(dim(tandemms[[x]])[1]) ) x <- TRUE else x <- FALSE } )
+  
+  if ( (all(as.logical(tandemrm)) == TRUE) | (is.na(all(as.logical(tandemrm)))) )
+    return(NULL)
+  else
+    tandemms <- tandemms[!tandemrm]
+  
+  # Process spectra
   peaks <- do.call(rbind, tandemms)
   g <- xcms:::mzClust_hclust(peaks[,"mz"], eppm=eppm, eabs=eabs)
   
   mz <- tapply (peaks[,"mz"], as.factor(g), mean)
   intensity <- tapply (peaks[,"intensity"], as.factor(g), max)
-  
-  mz <- mz[intensity >= int.threshold]
-  intensity <- intensity[intensity >= int.threshold]
   
   if(length(mz) == 0)return(NULL);
   
@@ -45,15 +52,15 @@ merge.spectra.group <- function(spectra, eppm, eabs, int.threshold) {
   mz <- mz[order(mz)]
   
   res <- .Call("Spectrum2_constructor_mz_sorted",
-               attributes(spectra[[1]])$msLevel, length(mz), rt.at.max.int, 
-               attributes(spectra[[1]])$acquisitionNum, 
-               attributes(spectra[[1]])$scanIndex, max.tic, mz,
-               intensity, attributes(spectra[[1]])$fromFile, attributes(spectra[[1]])$centroided, 
-               attributes(spectra[[1]])$smoothed, attributes(spectra[[1]])$polarity,
-               attributes(spectra[[1]])$merged, attributes(spectra[[1]])$precScanNum, 
-               mean.precursor.mz, max.precursor.int, attributes(spectra[[1]])$precursorCharge, attributes(spectra[[1]])$collisionEnergy,
-               TRUE, attributes(spectra[[1]])$.__classVersion__,
-               PACKAGE = "MSnbase")
+         attributes(spectra[[1]])$msLevel, length(mz), rt.at.max.int, 
+         attributes(spectra[[1]])$acquisitionNum, 
+         attributes(spectra[[1]])$scanIndex, max.tic, mz,
+         intensity, attributes(spectra[[1]])$fromFile, attributes(spectra[[1]])$centroided, 
+         attributes(spectra[[1]])$smoothed, attributes(spectra[[1]])$polarity,
+         attributes(spectra[[1]])$merged, attributes(spectra[[1]])$precScanNum, 
+         mean.precursor.mz, max.precursor.int, attributes(spectra[[1]])$precursorCharge, attributes(spectra[[1]])$collisionEnergy,
+         TRUE, attributes(spectra[[1]])$.__classVersion__,
+         PACKAGE = "MSnbase")
   attributes(res)$start.rt <- start.rt
   attributes(res)$end.rt <- end.rt
   return(res)
@@ -97,11 +104,11 @@ collect.spectra.lists <- function(spectra, mzabs, mzppm, rtabs) {
       spectra.list[[1]] <- spectrum.group[[a[index,3]]]
       index <- index + 1
       while(index <= dim(a)[1]) {
-         diff.rt <- abs(a[index - 1, 1] - a[index, 1])
-         if(diff.rt <= rtabs & diff.mz <= cur.abs) {
-            spectra.list[[length(spectra.list) + 1]] <- spectrum.group[[a[index,3]]]
-            index <- index + 1
-         } else break
+        diff.rt <- abs(a[index - 1, 1] - a[index, 1])
+        if(diff.rt <= rtabs & diff.mz <= cur.abs) {
+          spectra.list[[length(spectra.list) + 1]] <- spectrum.group[[a[index,3]]]
+          index <- index + 1
+        } else break
       }
       grouped.spectra[[length(grouped.spectra) + 1]] <<- spectra.list
     }
@@ -118,7 +125,7 @@ filter.grouped.spectra <- function(grouped.spectra, max.rt.range, max.mz.range, 
     mean.rts <- mean(rts)
     max.number.peaks <- max(sapply(grouped.spectrum, function(x) attributes(x)$peaksCount))
     if((max(mzs)-min(mzs)) <= max.mz.range & (max(rts)-min(rts)) <= max.rt.range & mean.rts < max.rt & mean.mzs < max.mz
-        & mean.rts > min.rt & mean.mzs > min.mz & max.number.peaks > 0) {
+       & mean.rts > min.rt & mean.mzs > min.mz & max.number.peaks > 0) {
       filtered.grouped.spectra[[length(filtered.grouped.spectra) + 1]] <<- grouped.spectrum
     }
   })
@@ -137,4 +144,3 @@ merge.spectra <- function(spectra, mzabs, mzppm, rtabs, max.rt.range, max.mz.ran
   print(paste("Filtered",length(b),"spectrum groups with peak information"))
   return(b)
 }
-
