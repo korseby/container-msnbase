@@ -8,6 +8,7 @@ args <- commandArgs(trailingOnly = TRUE)
 if(length(args)==0)stop("No parameters are given!\n")
 msnbaserdata<-NA
 output<-NA
+output.pdf<-NA
 mzppm<-10
 mzabs<-0.01
 rtabs<-2 # in seconds
@@ -70,6 +71,10 @@ for(arg in args)
   {
     output=as.character(value)
   }
+  if(argCase=="output.pdf")
+  {
+    output.pdf=as.character(value)
+  }
 }
 if(is.na(msnbaserdata) | is.na(output)) stop("Both input and output need to be specified!\n")
 library(xcms)
@@ -79,7 +84,7 @@ load(file = msnbaserdata)
 MSMSdata<-get(varNameForNextStep)
 originalFileName<-attributes(MSMSdata)$fileName
 # merge and filter spectra
-MS2RawFile <- merge.spectra(MSMSdata, mzabs, mzppm, rtabs, max.rt.range, max.mz.range, min.rt, max.rt, min.mz, max.mz, msms.intensity.threshold)
+MS2RawFile <- merge.spectra(MSMSdata, mzabs, mzppm, rtabs, max.rt.range, max.mz.range, min.rt, max.rt, min.mz, max.mz, output.pdf=output.pdf, msms.intensity.threshold)
 attributes(MS2RawFile)$fileName <- originalFileName
 
 preprocessingStepsMS2<-c("MS2RawFile")
