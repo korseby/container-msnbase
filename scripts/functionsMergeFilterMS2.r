@@ -66,6 +66,18 @@ merge.spectra.group <- function(spectra, eppm, eabs, int.threshold) {
   return(res)
 }
 
+grouped.list.to.matrix <- function(grouped.spectra) {
+  data.mat <- matrix(0, ncol=3, nrow=0)
+  colnames(data.mat) <- c("mz", "rt", "gid")
+  for (i in 1:length(grouped.spectra)) {
+    for(j in 1:length(grouped.spectra[[i]])) {
+      data.mat <- rbind(data.mat, 
+                        c(grouped.spectra[[i]][[j]]@precursorMz, grouped.spectra[[i]][[j]]@rt, i))
+    }
+  }
+  return(data.mat)
+}
+
 get.ppm.from.abs <- function(peak, ppm) {
   return ((peak / 1000000.0) * ppm)
 }
@@ -92,7 +104,7 @@ collect.spectra.lists <- function(spectra, mzabs, mzppm, rtabs) {
     grouped.spectra.tmp[[length(grouped.spectra.tmp) + 1]] <- spectra.list
   }
   grouped.spectra <- list()
-  sapply(1:length(grouped.spectra.tmp), function(spectrum.group.index) {
+  for(spectrum.group.index in 1:length(grouped.spectra.tmp)) {
     spectrum.group <- grouped.spectra.tmp[[spectrum.group.index]]
     a<-t(sapply(1:length(spectrum.group), function(spectrum.index) {
       c(attributes(spectrum.group[[spectrum.index]])$rt, attributes(spectrum.group[[spectrum.index]])$precursorMz, spectrum.index)
@@ -105,15 +117,35 @@ collect.spectra.lists <- function(spectra, mzabs, mzppm, rtabs) {
       index <- index + 1
       while(index <= dim(a)[1]) {
         diff.rt <- abs(a[index - 1, 1] - a[index, 1])
-        if(diff.rt <= rtabs & diff.mz <= cur.abs) {
+        if(diff.rt <= rtabs) {
           spectra.list[[length(spectra.list) + 1]] <- spectrum.group[[a[index,3]]]
           index <- index + 1
         } else break
       }
-      grouped.spectra[[length(grouped.spectra) + 1]] <<- spectra.list
+      grouped.spectra[[length(grouped.spectra) + 1]] <- spectra.list
     }
-  })
+  }
   return(grouped.spectra)
+}
+
+plot.grouped.spectra <- function(grouped.spectra) {
+  if(class(grouped.spectra)=="list" & length(grouped.spectra) > 0) {
+    set.seed(100)
+    cols <- sample(rainbow(length(grouped.spectra)))
+    data.mat <- grouped.list.to.matrix(grouped.spectra)
+    plot(data.mat[,2], data.mat[,1], col=cols[data.mat[,3]], xlab="RT", ylab="m/z")
+    sapply(unique(data.mat[,3]), function(x) {
+      a <- data.mat[data.mat[,3]==x,]
+      if(class(a)=="numeric") a <- matrix(a, ncol=3)
+      text(min(a[,2]), min(a[,1]), labels = x, col=cols[cols[x]], srt=45, cex=0.5)
+    })
+  }
+}
+
+save.plot.grouped.spectra <- function(grouped.spectra, file.name) {
+  pdf(file.name, width=20, height=15)
+  plot.grouped.spectra(grouped.spectra)
+  dev.off()
 }
 
 filter.grouped.spectra <- function(grouped.spectra, max.rt.range, max.mz.range, min.rt, max.rt, min.mz, max.mz) {
@@ -132,8 +164,9 @@ filter.grouped.spectra <- function(grouped.spectra, max.rt.range, max.mz.range, 
   return(filtered.grouped.spectra)
 }
 
-merge.spectra <- function(spectra, mzabs, mzppm, rtabs, max.rt.range, max.mz.range, min.rt, max.rt, min.mz, max.mz, int.threshold = 0) {
+merge.spectra <- function(spectra, mzabs, mzppm, rtabs, max.rt.range, max.mz.range, min.rt, max.rt, min.mz, max.mz, output.pdf = NA, int.threshold = 0) {
   a <- collect.spectra.lists(spectra, mzabs, mzppm, rtabs)
+  if(length(a) != 0 & !is.na(output.pdf)) {save.plot.grouped.spectra(a, output.pdf)}
   print(paste("Collected",length(a),"spectrum groups"))
   b <- filter.grouped.spectra(a, max.rt.range, max.mz.range, min.rt, max.rt, min.mz, max.mz)
   print(paste("Filtered",length(b),"spectrum groups"))
