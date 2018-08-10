@@ -4,6 +4,10 @@
     <container type="docker">korseby/mtbls709</container>
   </requirements>
   <description>Filter and merge MS/MS spectra using retention time and m/z information.</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
   <command><![CDATA[
 	/usr/local/bin/mergeFilterMS2.r msnbaserdata=$msnbase_filter_merge_msms_input_1 mzppm=$mzppm mzabs=$mzabs rtabs=$rtabs max_rt_range=$max_rt_range max_mz_range=$max_mz_range min_rt=$min_rt max_rt=$max_rt min_mz=$min_mz max_mz=$max_mz msms_intensity_threshold=$msms_intensity_threshold output=$msnbase_filter_merge_msms_output_1 output.pdf=$msnbase_filter_merge_msms_output_2;
   ]]>

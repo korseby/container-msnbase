@@ -4,6 +4,10 @@
     <container type="docker">korseby/mtbls709</container>
   </requirements>
   <description>Perform isotope annotation using CAMERA.</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
   <command><![CDATA[
 	/usr/local/bin/findIsotopes.r input=$camera_find_isotopes_input_1 output=$camera_find_isotopes_output_1 maxcharge=$maxcharge;
   ]]>

@@ -6,6 +6,10 @@
   <description>Group peaks of a xsAnnotate object according to there retention
      time into pseudospectra-groups. Uses the peak FWHMs as grouping
      borders.</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
   <command><![CDATA[
 	/usr/local/bin/groupFWHM.r input=$camera_group_fwhm_input_1 output=$camera_group_fwhm_output_1 sigma=$sigma perfwhm=$perfwhm intval=$intval;  
   ]]>

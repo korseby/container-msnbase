@@ -4,6 +4,10 @@
     <container type="docker">korseby/mtbls709</container>
   </requirements>
   <description>Perform precursor adduct annotation using CAMERA.</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
   <command><![CDATA[
 	/usr/local/bin/findAdducts.r input=$camera_find_adducts_input_1 output=$camera_find_adducts_output_1 ppm=$ppm polarity=$polarity output.pdf=$camera_find_adducts_output_2 plotpdf=$plotpdf rules=$rules;
   ]]>

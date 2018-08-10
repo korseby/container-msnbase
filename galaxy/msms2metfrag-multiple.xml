@@ -4,6 +4,10 @@
     <container type="docker">korseby/mtbls709</container>
   </requirements>
   <description>Generate MetFrag parameters (merged in one file) given MS/MS spectral information and CAMERA adduct annotation.</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
   <command><![CDATA[
 	mkdir outputfolder;
 	/usr/local/bin/MS2ToMetFrag.r inputCAMERA=$msms2metfrag_input_2 inputMS2=$msms2metfrag_input_1 output=outputfolder precursorppm=$precursorppm fragmentppm=$fragmentppm fragmentabs=$fragmentabs database=$database maxSpectra=$maxSpectra minPeaks=$minPeaks maxPrecursorMass=$maxPrecursorMass minPrecursorMass=$minPrecursorMass mode=$mode adductRules=$adductRules  outputname=$metfragparam outputmerge=true;

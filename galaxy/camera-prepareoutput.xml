@@ -4,6 +4,10 @@
     <container type="docker">korseby/mtbls709</container>
   </requirements>
   <description>Prepare output for doing multi/uni variate</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
   <command><![CDATA[
 	/usr/local/bin/prepareOutput.r inputcamera=$inputcamerain inputscores=$inputscoresin inputpheno=$inputphenoin ppm=$ppmin rt=$rtin higherTheBetter=$higherTheBetterin scoreColumn=$scoretypein impute=$imputein typeColumn=$columntypein selectedType=$selectedTypein rename=$renamein renameCol=$renameColin onlyReportWithID=$onlyReportWithIDin combineReplicate=$combineReplicatein combineReplicateColumn=$combineReplicateColumnin outputPeakTable=$outputPeakTableOut outputVariables=$outputVariablesOut outputMetaData=$outputMetaDataOut log=$login sampleCoverage=$samcov sampleCoverageMethod=$samcovmethod;
   ]]>

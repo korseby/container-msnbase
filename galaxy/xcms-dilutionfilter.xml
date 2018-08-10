@@ -4,6 +4,10 @@
     <container type="docker">korseby/mtbls709</container>
   </requirements>
   <description>Filters out the peaks that do not correlate with a dilution trend.</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
   <command><![CDATA[
 	/usr/local/bin/dilutionfilter.r input=$xcmsset output=$outputin Corto=$cortoin dilution=$dilutionin pvalue=$pvaluein corcut=$corin abs=$absin 
 #if $infilecvs:

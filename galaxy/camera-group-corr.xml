@@ -5,6 +5,10 @@
   </requirements>
   <description>Peak grouping after correlation information into pseudospectrum
      groups for an xsAnnotate object.</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
   <command><![CDATA[
 	/usr/local/bin/groupCorr.r input=$camera_group_corr_input_1 output=$camera_group_corr_output_1 correlation=$correlation pvalue=$pvalue;  
   ]]>

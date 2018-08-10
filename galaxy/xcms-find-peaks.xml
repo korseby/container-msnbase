@@ -4,6 +4,10 @@
     <container type="docker">korseby/mtbls709</container>
   </requirements>
   <description>Find peaks in mzML file and generate a xcmsSet using XCMS centWave algorithm.</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
   <command><![CDATA[
 	ln -s ${xcms_find_peaks_input_1} ${xcms_find_peaks_input_1}.mzML;
         /usr/local/bin/findPeaks.r input=${xcms_find_peaks_input_1}.mzML output=$xcms_find_peaks_output_1 ppm=$ppm peakwidthLow=$peakwidthLow peakwidthHigh=$peakwidthHigh noise=$noise polarity=$polarity realFileName=$xcms_find_peaks_input_1.name
