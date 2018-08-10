@@ -4,6 +4,10 @@
     <container type="docker">korseby/mtbls709</container>
   </requirements>
   <description>Generate a PDF summary for MetFrag result files</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
   <command><![CDATA[
   	mkdir /tmp/outputdir/;
         bash /usr/local/bin/visualize-metfrag.sh $metfrag_vis_input_1 /tmp/outputdir/combined_top1_cands.csv $metfrag_vis_input_2;
