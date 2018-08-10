@@ -1,11 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--This is a configuration file for the integration of a tools into Galaxy (https://galaxyproject.org/).-->
-<!--Proposed Tool Section: [PhenoMeNal]-->
 <tool id="xcmssplit" name="xcmssplit" version="0.1">
+  <requirements>
+    <container type="docker">korseby/mtbls709</container>
+  </requirements>
   <description>Split xcmsSet collection into several objects used for further processing.</description>
-<!--     <requirements>
-    <container type="docker">container-registry.phenomenal-h2020.eu/phnmnl/xcms</container>
-    </requirements>-->
   <command><![CDATA[
  	mkdir xcmsobjects;
 	/usr/local/bin/xcmssplitter.r input=$xcmssplit_input_1 output=xcmsobjects;

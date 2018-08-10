@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--This is a configuration file for the integration of a tools into Galaxy (https://galaxyproject.org/).-->
-<!--Proposed Tool Section: [PhenoMeNal]-->
 <tool id="msnbase-read-msms" name="msnbase-read-msms" version="0.1">
+  <requirements>
+    <container type="docker">korseby/mtbls709</container>
+  </requirements>
   <description>Read MS/MS spectra from mzML file(s).</description>
   <command><![CDATA[
 	/usr/local/bin/readMS2MSnBase.r input=$msnbase_read_msms_input_1 output=$msnbase_read_msms_output_1 inputname=$msnbase_read_msms_input_1.name;

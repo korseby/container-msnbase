@@ -1,38 +1,41 @@
-FROM container-registry.phenomenal-h2020.eu/phnmnl/camera:dev_v1.33.3_cv0.8.56
+FROM ubuntu:16.04
 
-MAINTAINER PhenoMeNal-H2020 Project (phenomenal-h2020-users@googlegroups.com)
+MAINTAINER Kristian Peters (kpeters@ipb-halle.de)
 
-LABEL software=MSnbase
-LABEL software.version=2.2
-LABEL version=1.0
-LABEL Description="MSnbase: Basic plotting, data manipulation and processing of MS-based Proteomics data."
+# Add cran R backport
+ENV DEBIAN_FRONTEND="noninteractive"
+RUN apt-get -y update && apt-get -y dist-upgrade && apt-get -y install apt-transport-https perl
+RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/" >> /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+
+# Generate locales
+ENV LC_ALL="en_US.UTF-8"
+ENV LC_CTYPE="en_US.UTF-8"
+RUN locale-gen $LC_ALL
+RUN dpkg-reconfigure locales
 
 # Install packages for compilation
-RUN apt-get -y update
-RUN apt-get -y --no-install-recommends install make gcc gfortran g++ libblas-dev liblapack-dev libxml++2.6-dev libexpat1-dev libxml2
+RUN apt-get -y update && apt-get -y dist-upgrade && apt-get -y install apt-transport-https make gcc gfortran g++ libblas-dev liblapack-dev libxml++2.6-dev libexpat1-dev libxml2-dev libnetcdf-dev libssl-dev r-base r-base-dev maven texlive-latex-base git openjdk-8-jdk-headless texlive-fonts-recommended openjdk-8-jre-headless pkg-config wget curl git unzip zip
 
-# Install dependencies
-RUN R -e 'install.packages(c("ggplot2","digest","lattice","XML","Rcpp","reshape2","plyr","stringr","intervals"), repos="https://mirrors.ebi.ac.uk/CRAN/")'
+# Install R packages
+RUN R -e 'install.packages(c("irlba","igraph","ggplot2","digest","lattice","XML","Rcpp","reshape2","plyr","stringr","intervals","devtools","RColorBrewer","plyr","RANN","knitr","ncdf4","microbenchmark","RUnit"), repos="https://cloud.r-project.org/")'
 
-# Install MSnbase 
-RUN R -e 'install.packages("BiocInstaller", repos="http://bioconductor.org/packages/3.5/bioc"); library("BiocInstaller"); biocLite("MSnbase")'
-# RUN R -e 'source("https://bioconductor.org/biocLite.R"); biocLite("MSnbase")'
+# Install  Bioconductor 
+RUN R -e 'source("https://bioconductor.org/biocLite.R"); biocLite(c("multtest","MSnbase","mzR","MassSpecWavelet","S4Vectors","BiocStyle","faahKO","msdata","xcms","CAMERA"), ask=FALSE)'
 
-# De-install not needed packages
+# Install MetFrag
+RUN wget http://central.maven.org/maven2/net/sf/jni-inchi/jni-inchi/0.8/jni-inchi-0.8.jar && mkdir -p /root/.jnati/repo/ && jar xf jni-inchi-0.8.jar && mv META-INF/jniinchi /root/.jnati/repo/
+RUN wget -O /usr/local/bin/MetFragCLI.jar http://msbi.ipb-halle.de/~cruttkie/92f73acb731145c73ffa3dfb8fd59581bee0d844963889338c3ec173874b5a5f/MetFrag-2.4.5.jar
+
+# Install MetFrag tools
+RUN git clone https://github.com/c-ruttkies/ConvertMetFragCSV.git && cd ConvertMetFragCSV && mvn clean install -am && mv target/ConvertMetFragCSV-*-jar-with-dependencies.jar /usr/local/bin/ConvertMetFragCSV.jar 
+RUN wget https://msbi.ipb-halle.de/~cruttkie/metfrag/MetFrag2.4.5-Tools.jar && mv MetFrag2.4.5-Tools.jar /usr/local/bin/MetFrag-Tools.jar
+
+# Cleanup
 RUN apt-get -y --purge --auto-remove remove make gcc gfortran g++
-
-# Clean-up
 RUN apt-get -y clean && apt-get -y autoremove && rm -rf /var/lib/{cache,log}/ /tmp/* /var/tmp/*
 
 # Add scripts folder to container
 ADD scripts/*.r /usr/local/bin/
-# Add files for testing
-ADD runTest1.sh /usr/local/bin/
-
 RUN chmod +x /usr/local/bin/*.r
-RUN chmod +x /usr/local/bin/runTest1.sh
-
-# Define Entry point script
-#ENTRYPOINT [ "Rscript" ]
-#CMD [ "/usr/local/bin/show_chromatogram.r" ]
 

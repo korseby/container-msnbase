@@ -1,11 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--Proposed Tool Section: [Utilities]-->
 <tool id="aggregatemetfrag" name="metfrag-aggregatemetfrag" version="0.1">
-<!--
   <requirements>
-    <container type="docker">phnmnl/xcms</container>
+    <container type="docker">korseby/mtbls709</container>
   </requirements>
--->
   <description>Aggregate results from MetFrag</description>
   <command><![CDATA[
 /usr/local/bin/aggregateMetfrag.r 

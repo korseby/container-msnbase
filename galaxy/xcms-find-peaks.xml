@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--This is a configuration file for the integration of a tools into Galaxy (https://galaxyproject.org/).-->
-<!--Proposed Tool Section: [PhenoMeNal]-->
 <tool id="xcms-find-peaks" name="xcms-find-peaks" version="0.2">
+  <requirements>
+    <container type="docker">korseby/mtbls709</container>
+  </requirements>
   <description>Find peaks in mzML file and generate a xcmsSet using XCMS centWave algorithm.</description>
   <command><![CDATA[
 	ln -s ${xcms_find_peaks_input_1} ${xcms_find_peaks_input_1}.mzML;
