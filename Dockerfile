@@ -40,6 +40,7 @@ RUN wget -O /usr/local/bin/MetFrag-Lib.jar https://msbi.ipb-halle.de/~cruttkie/m
 RUN apt-get -y --purge --auto-remove remove make gcc gfortran g++
 RUN apt-get -y clean && apt-get -y autoremove && rm -rf /var/lib/{cache,log}/ /tmp/* /var/tmp/*
 
+RUN echo 1
 # Add scripts folder to container
 ADD scripts/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/*
