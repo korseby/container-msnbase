@@ -39,6 +39,9 @@ RUN wget -O /usr/local/bin/MetFrag-Lib.jar https://msbi.ipb-halle.de/~cruttkie/m
 # Install metfrag-cli-batch
 RUN wget -O /usr/local/bin/run_metfrag.sh https://raw.githubusercontent.com/phnmnl/container-metfrag-cli-batch/develop/run_metfrag.sh
 
+# Install cdk-smiles-to-pdf
+RUN git clone https://github.com/korseby/container-msnbase && cd container-msnbase && cd cdk-smiles-to-pdf && mvn package && for i in $(find . -name "*with-dependencies*jar"); do install -m755 "$i" /usr/local/bin/cdk-smiles-to-pdf.jar; done
+
 # Cleanup
 RUN apt-get -y --purge --auto-remove remove make gcc gfortran g++
 RUN apt-get -y clean && apt-get -y autoremove && rm -rf /var/lib/{cache,log}/ /tmp/* /var/tmp/*
