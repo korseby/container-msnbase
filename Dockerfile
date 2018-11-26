@@ -18,7 +18,7 @@ RUN dpkg-reconfigure locales
 RUN apt-get -y update && apt-get -y dist-upgrade && apt-get -y install apt-transport-https make gcc gfortran g++ libblas-dev liblapack-dev libxml++2.6-dev libexpat1-dev libxml2-dev libnetcdf-dev libssl-dev r-base r-base-dev maven texlive-latex-base git openjdk-8-jdk-headless texlive-fonts-recommended openjdk-8-jre-headless pkg-config parallel wget curl git unzip zip
 
 # Install R packages
-RUN R -e 'install.packages(c("irlba","igraph","ggplot2","digest","lattice","XML","Rcpp","reshape2","plyr","stringr","intervals","devtools","RColorBrewer","plyr","RANN","knitr","ncdf4","microbenchmark","RUnit"), repos="https://cloud.r-project.org/")'
+RUN R -e 'install.packages(c("irlba","igraph","ggplot2","digest","lattice","XML","Rcpp","reshape2","plyr","stringi","stringr","tools","intervals","devtools","RColorBrewer","plyr","RANN","knitr","ncdf4","microbenchmark","RUnit","parallel","foreach","doMC","curl","jsonlite"), repos="https://cloud.r-project.org/")'
 
 # Install  Bioconductor 
 RUN R -e 'source("https://bioconductor.org/biocLite.R"); biocLite(c("multtest","MSnbase","mzR","MassSpecWavelet","S4Vectors","BiocStyle","faahKO","msdata","xcms","CAMERA"), ask=FALSE)'
@@ -36,11 +36,13 @@ RUN wget -O /usr/local/bin/MetFrag-Tools.jar https://msbi.ipb-halle.de/~cruttkie
 # Install MetFrag lib
 RUN wget -O /usr/local/bin/MetFrag-Lib.jar https://msbi.ipb-halle.de/~cruttkie/metfrag/MetFragLib-2.4.5.jar
 
+# Install metfrag-cli-batch
+RUN wget -O /usr/local/bin/run_metfrag.sh https://raw.githubusercontent.com/phnmnl/container-metfrag-cli-batch/develop/run_metfrag.sh
+
 # Cleanup
 RUN apt-get -y --purge --auto-remove remove make gcc gfortran g++
 RUN apt-get -y clean && apt-get -y autoremove && rm -rf /var/lib/{cache,log}/ /tmp/* /var/tmp/*
 
-RUN echo 1
 # Add scripts folder to container
 ADD scripts/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/*
