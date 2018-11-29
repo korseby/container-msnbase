@@ -188,7 +188,7 @@ f.classyfire_inchi <- function(inchi) {
 
 # ---------- Process MetFrag Table ----------
 # Read MetFrag results file
-metfrag_results_raw <- read.table(file=metfrag_results_file, quote='\"', sep=',', header=TRUE, stringsAsFactors=TRUE, fill=TRUE)
+metfrag_results_raw <- read.table(file=metfrag_results_file, quote='\"', sep=',', header=TRUE, stringsAsFactors=TRUE, fill=TRUE, row.names=NULL)
 
 # Only take the entries with the highest scores
 metfrag_results <- metfrag_results_raw[0, ]
