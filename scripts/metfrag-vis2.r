@@ -188,7 +188,7 @@ f.classyfire_inchi <- function(inchi) {
 
 # ---------- Process MetFrag Table ----------
 # Read MetFrag results file
-metfrag_results_raw <- read.table(file=metfrag_results_file, quote='\"', sep=',', header=TRUE, stringsAsFactors=TRUE, fill=TRUE, row.names=NULL)
+metfrag_results_raw <- read.table(file=metfrag_results_file, quote='\"', sep=',', header=TRUE, stringsAsFactors=TRUE, fill=TRUE)
 
 # Only take the entries with the highest scores
 metfrag_results <- metfrag_results_raw[0, ]
@@ -309,16 +309,18 @@ for (i in 1:nrow(metfrag_rtmz_unique)) {
     metfrag_rtmz_unique[i,]
     metfrag_results_entries <- metfrag_results[c(which(metfrag_results$parentRT==metfrag_rtmz_unique[i,"parentRT"] & metfrag_results$parentMZ==metfrag_rtmz_unique[i,"parentMZ"])),]
     
-    for (i in c(1:nrow(metfrag_results_entries))) {
+    for (j in c(1:nrow(metfrag_results_entries))) {
         # Entry header
-        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('% Entry: ',i),
+        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('% Entry: ',j),
                                                             '\\begin{minipage}{1\\textwidth}',
                                                             '    \\begin{minipage}{0.15\\textwidth}'))
         
         # Include structures
-        if (nchar(metfrag_results_entries[i,"StructurePDF"]) > 2) {
-            cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('        \\includegraphics[width=4cm]{', metfrag_results_entries[i,"StructurePDF"], '}')))
-        } else if (file.info("output/metfrag_vis.aux")$size <= 2 ) {
+        if (nchar(metfrag_results_entries[j,"StructurePDF"]) > 2) {
+            cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('        \\includegraphics[width=4cm]{', metfrag_results_entries[j,"StructurePDF"], '}')))
+        } else if (nchar(metfrag_results_entries[j,"StructurePDF"]) < 2) {
+            cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('        \\textbf{no structure available}'))
+        } else if (file.info(metfrag_results_entries[j,"StructurePDF"])$size <= 2 ) {
             cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('        \\textbf{no structure available}'))
         } else {
             cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('        \\textbf{no structure available}'))
@@ -330,13 +332,13 @@ for (i in 1:nrow(metfrag_rtmz_unique)) {
                                                             '        \\begin{itemize}'))
         
         # MetFrag items
-        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('			\\item[] \\textbf{Identifier:} ',metfrag_results_entries[i,"Identifier"]),
-                                                            paste0('			\\item[] \\textbf{Synonyms:} ',metfrag_results_entries[i,"Synonyms"]),
-                                                            paste0('			\\item[] \\textbf{Molecular Formula:} ',metfrag_results_entries[i,"MolecularFormula"]),
-                                                            paste0('			\\item[] \\textbf{Primary compound class:} ', metfrag_results_entries[i,"ClassyFireDirect"]),
-                                                            paste0('			\\item[] \\textbf{Alternative compound classes:} ', metfrag_results_entries[i,"ClassyFireAlternatives"]),
-                                                            paste0('			\\item[] \\textbf{MetFusion Score:} ',metfrag_results_entries[i,"OfflineMetFusionScore"]),
-                                                            paste0('			\\item[] \\textbf{Peaks explained:} ',metfrag_results_entries[i,"NoExplPeaks"], '/', metfrag_results_entries[i,"NumberPeaksUsed"]) ))
+        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('			\\item[] \\textbf{Identifier:} ',metfrag_results_entries[j,"Identifier"]),
+                                                            paste0('			\\item[] \\textbf{Synonyms:} ',metfrag_results_entries[j,"Synonyms"]),
+                                                            paste0('			\\item[] \\textbf{Molecular Formula:} ',metfrag_results_entries[j,"MolecularFormula"]),
+                                                            paste0('			\\item[] \\textbf{Primary compound class:} ', metfrag_results_entries[j,"ClassyFireDirect"]),
+                                                            paste0('			\\item[] \\textbf{Alternative compound classes:} ', metfrag_results_entries[j,"ClassyFireAlternatives"]),
+                                                            paste0('			\\item[] \\textbf{MetFusion Score:} ',metfrag_results_entries[j,"OfflineMetFusionScore"]),
+                                                            paste0('			\\item[] \\textbf{Peaks explained:} ',metfrag_results_entries[j,"NoExplPeaks"], '/', metfrag_results_entries[j,"NumberPeaksUsed"]) ))
         
         # Entry footer
         cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('        \\end{itemize}',
@@ -363,5 +365,6 @@ cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('% Footer',
 #    quit(status="400")
 #}
 #setwd(args[1])
+
 
 
