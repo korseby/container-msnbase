@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<tool id="mzml-to-msp" name="mzml-to-msp" version="0.1">
+  <requirements>
+    <container type="docker">korseby/mtbls709</container>
+  </requirements>
+  <description>Extract MS2 spectra from and convert a (set of) mzML file(s) to MSP format.</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
+  <command><![CDATA[
+ 	mkdir output;
+	/usr/local/bin/mzml-to-msp.r input=$mzml_input_1 output=msp_objects;
+  ]]>
+  </command>
+  <inputs>
+    <param name="mzml_input_1" type="data" format="mzml" optional="False" label="mzML file" help="(Set of) mzML file(s)" />
+  </inputs>
+  <outputs>
+        <collection name="msp_objects" type="list" label="msp_output">
+        	<discover_datasets pattern="__designation__" directory="msp_objects" visible="true" format="txt" />
+        </collection>
+  </outputs>
+  <help>
+.. class:: infomark
+
+**Authors**
+
+| **Kristian Peters (kpeters@ipb-halle.de)** wrote and maintains this module.
+
+---------------------------------------------------
+
+===========
+mzML to MSP
+===========
+
+-----------
+Description
+-----------
+
+| Extract spectra from and convert mzML file to MSP format.
+
+-----------
+Input files
+-----------
+
++------------------------------+------------+
+| File                         |   Format   |
++==============================+============+
+| 1)  mzML file(s)             |   mzML     |
++------------------------------+------------+
+
+----------
+Parameters
+----------
+	  
+XCMS-Set file
+	| A rdata file with XCMS-Set objects that were grouped by **xcms-collect-peaks**
+        |
+
+------------
+Output files
+------------
+	
+xcmssplit_input_1.rdata
+	| (Multiple) rdata file(s) containing one XCMS-Set object each
+        |
+
+
+---------------------------------------------------
+
+  </help>
+</tool>
