@@ -1,37 +1,22 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<tool id="mzml-to-msp" name="mzml-to-msp" version="0.1">
+<tool id="msp-to-metfrag" name="msp-to-metfrag" version="0.1">
   <requirements>
     <container type="docker">korseby/mtbls709</container>
   </requirements>
-  <description>Extract MS2 spectra from and convert a (set of) mzML file(s) to MSP format.</description>
+  <description>Read MS2 spectra from MSP file and create MetFrag parameter file.</description>
   <stdio>
     <regex match="" source="stderr" level="warning" description="R messages" />
     <exit_code range="1:" level="fatal" description="Tool error" />
   </stdio>
   <command><![CDATA[
-export mzmldir=`dirname $mzmlfile`;
-export mzmlname=$mzmlfile.name;
-export samplename=`basename $mzmlfile.name .mzML`;
-cp $mzmlfile /tmp/$mzmlfile.name;
-mkdir /tmp/msp;
-echo "mzmldir: \$mzmldir";
-echo "mzmlname: \$mzmlname";
-echo "samplename: \$samplename";
-/usr/local/bin/mzml-to-msp.r /tmp/$mzmlfile.name $mspfile;
-ls -r /tmp;
-cp /tmp/\$samplename.msp $mspfile;
+/usr/local/bin/msp-to-metfrag.r $mspfile $metfragparameterfile;
   ]]>
   </command>
   <inputs>
-    <param name="mzmlfile" type="data" format="mzml" optional="False" label="mzML file" help="(Set of) mzML file(s)" />
+    <param name="mspfile" type="data" format="txt" optional="False" label="MSP file" help="MSP file" />
   </inputs>
   <outputs>
-<!--
-    <collection name="mspobjects" type="list" label="msp_output">
-      <discover_datasets pattern="__designation__" directory="mspobjects" visible="true" format="txt" />
-    </collection>
--->
-    <data name="mspfile" type="data" format="txt" label="${mzmlfile.display_name}.msp" />
+    <data name="metfragparameterfile" type="data" format="txt" label="${mspfile.display_name}_parameter.txt" />
   </outputs>
   <help>
 .. class:: infomark
@@ -42,15 +27,15 @@ cp /tmp/\$samplename.msp $mspfile;
 
 ---------------------------------------------------
 
-===========
-mzML to MSP
-===========
+========================
+MSP to MetFrag parameter
+========================
 
 -----------
 Description
 -----------
 
-| Extract spectra from and convert mzML file to MSP format.
+| Read spectra from MSP file and create MetFrag parameter file.
 
 -----------
 Input files
@@ -59,7 +44,7 @@ Input files
 +------------------------------+------------+
 | File                         |   Format   |
 +==============================+============+
-| 1)  mzML file(s)             |   mzML     |
+| 1)  MSP file(s)              |   MSP      |
 +------------------------------+------------+
 
 ----------
@@ -83,3 +68,4 @@ xcmssplit_input_1.rdata
 
   </help>
 </tool>
+
