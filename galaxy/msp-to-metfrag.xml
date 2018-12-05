@@ -9,6 +9,7 @@
     <exit_code range="1:" level="fatal" description="Tool error" />
   </stdio>
   <command><![CDATA[
+echo $suspectfile;
 /usr/local/bin/msp-to-metfrag.r $mspfile $suspectfile $metfragparameterfile;
   ]]>
   </command>

@@ -666,9 +666,9 @@ f.ms2_msp_to_metfrag <- function() {
     DatabaseSearchRelativeMassDeviation <- 10
     FragmentPeakMatchAbsoluteMassDeviation <- 0.001
     FragmentPeakMatchRelativeMassDeviation <- 10
-    if (length(suspect_input_file) < 2) ScoreSuspectLists <- FALSE
-        else if (suspect_input_file != "None") ScoreSuspectLists <- as.character(suspect_input_file)
-        else ScoreSuspectLists <- FALSE
+    if (nchar(suspect_input_file) < 2) ScoreSuspectLists <- FALSE
+        else if (suspect_input_file == "None") ScoreSuspectLists <- FALSE
+        else ScoreSuspectLists <- TRUE
     MetFragDatabaseType <- "PubChem"
     if (ScoreSuspectLists) {
         MetFragScoreTypes <- "FragmenterScore,OfflineMetFusionScore,SuspectListScore"
@@ -703,7 +703,7 @@ f.ms2_msp_to_metfrag <- function() {
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "FragmentPeakMatchAbsoluteMassDeviation=", FragmentPeakMatchAbsoluteMassDeviation)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "FragmentPeakMatchRelativeMassDeviation=", FragmentPeakMatchRelativeMassDeviation)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "MetFragDatabaseType=", MetFragDatabaseType)
-        if (ScoreSuspectLists) metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "ScoreSuspectLists=", ScoreSuspectLists)
+        if (ScoreSuspectLists) metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "ScoreSuspectLists=", suspect_input_file)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "MetFragScoreTypes=", MetFragScoreTypes)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "MetFragScoreWeights=", MetFragScoreWeights)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "NeutralPrecursorMass=", NeutralPrecursorMass)
