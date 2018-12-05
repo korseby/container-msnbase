@@ -9,11 +9,12 @@
     <exit_code range="1:" level="fatal" description="Tool error" />
   </stdio>
   <command><![CDATA[
-/usr/local/bin/msp-to-metfrag.r $mspfile $metfragparameterfile;
+/usr/local/bin/msp-to-metfrag.r $mspfile $suspectfile $metfragparameterfile;
   ]]>
   </command>
   <inputs>
     <param name="mspfile" type="data" format="txt" optional="False" label="MSP file" help="MSP file" />
+    <param name="suspectfile" type="data" format="txt" optional="True" label="Suspect list" help="File containing a list of suspects" />
   </inputs>
   <outputs>
     <data name="metfragparameterfile" type="data" format="txt" label="${mspfile.display_name}_parameter.txt" />

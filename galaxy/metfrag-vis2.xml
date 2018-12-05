@@ -19,7 +19,7 @@
   ]]>
   </command>
   <inputs>
-    <param name="metfrag_vis_input_1" type="data" format="csv" multiple="True" optional="False" label="MetFrag result file(s)" />
+    <param name="metfrag_vis_input_1" type="data" format="csv" multiple="False" optional="False" label="MetFrag result file(s)" />
     <param name="metfrag_vis_hits_limit" type="text" value="10" label="MetFrag Hits Limit" optional="False" help="Limit of hits returned per compound." />
     <param name="metfrag_synonyms" type="select" value="True" optional="False" label="Synonyms" help="Fetch synonyms from PubChem?">
       <option value="True" selected="True">True</option>

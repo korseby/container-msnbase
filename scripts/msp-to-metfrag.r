@@ -10,7 +10,7 @@ library(MSnbase)                # MS features
 library(xcms)                   # Swiss army knife for metabolomics
 
 # Setup R error handling to go to stderr
-#options(show.error.messages=F, error=function() { cat(geterrmessage(), file=stderr()); q("no",1,F) } )
+options(show.error.messages=F, error=function() { cat(geterrmessage(), file=stderr()); q("no",1,F) } )
 
 # Set locales and encoding
 loc <- Sys.setlocale("LC_MESSAGES", "en_US.UTF-8")
@@ -21,23 +21,24 @@ options(encoding="UTF-8")
 options(stringAsfactors=FALSE, useFancyQuotes=FALSE)
 
 # Multicore parallel
-nSlaves <- detectCores(all.tests=FALSE, logical=TRUE)
-registerDoMC(nSlaves)
+#nSlaves <- detectCores(all.tests=FALSE, logical=TRUE)
+#registerDoMC(nSlaves)
 
 
 
 # ---------- Arguments and user variables ----------
 # Take in trailing command line arguments
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) < 2) {
+if (length(args) < 3) {
     print("Error! No or not enough arguments given.")
-    print("Usage: $0 input.msp output.txt")
+    print("Usage: $0 input.msp suspect.list output.txt")
     quit(save="no", status=1, runLast=FALSE)
 }
 
 # Data file
 msp_input_file <- args[1]
-metfrag_output_file <- args[2]
+suspect_input_file <- args[2]
+metfrag_output_file <- args[3]
 
 # MS1 variables
 polarity <- "positive"
@@ -665,8 +666,17 @@ f.ms2_msp_to_metfrag <- function() {
     DatabaseSearchRelativeMassDeviation <- 10
     FragmentPeakMatchAbsoluteMassDeviation <- 0.001
     FragmentPeakMatchRelativeMassDeviation <- 10
+    if (length(suspect_input_file) < 2) ScoreSuspectLists <- FALSE
+        else if (suspect_input_file == "None") ScoreSuspectLists <- as.character(suspect_input_file)
+        else ScoreSuspectLists <- FALSE
     MetFragDatabaseType <- "PubChem"
-    MetFragScoreTypes <- "FragmenterScore"
+    if (ScoreSuspectLists) {
+        MetFragScoreTypes <- "FragmenterScore,OfflineMetFusionScore,SuspectListScore"
+        MetFragScoreWeights <- "1.0,1.0,1.0"
+    } else {
+        MetFragScoreTypes <- "FragmenterScore,OfflineMetFusionScore"
+        MetFragScoreWeights <- "1.0,1.0"
+    }
     IsPositiveIonMode <- "True"
     MetFragPeakListReader <- "de.ipbhalle.metfraglib.peaklistreader.FilteredStringTandemMassPeakListReader"
     MetFragCandidateWriter <- "CSV"
@@ -675,7 +685,7 @@ f.ms2_msp_to_metfrag <- function() {
     FilterIncludedElements <- "C,H,N,O,P,S"
     MetFragPreProcessingCandidateFilter <- "UnconnectedCompoundFilter,IsotopeFilter,ElementInclusionOptionalFilter,ElementExclusionFilter"
     ############### TODO: GALAXY PARAMETER
-    
+
     metfrag_parameter_file <- NULL
     for (i in 1:msp_file$numberOfSpectra) {
         NeutralPrecursorMass <- msp_file$precursorMz[i]
@@ -693,7 +703,9 @@ f.ms2_msp_to_metfrag <- function() {
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "FragmentPeakMatchAbsoluteMassDeviation=", FragmentPeakMatchAbsoluteMassDeviation)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "FragmentPeakMatchRelativeMassDeviation=", FragmentPeakMatchRelativeMassDeviation)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "MetFragDatabaseType=", MetFragDatabaseType)
+        if (ScoreSuspectLists) metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "ScoreSuspectLists=", ScoreSuspectLists)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "MetFragScoreTypes=", MetFragScoreTypes)
+        metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "MetFragScoreWeights=", MetFragScoreWeights)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "NeutralPrecursorMass=", NeutralPrecursorMass)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "IsPositiveIonMode=", IsPositiveIonMode)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "PrecursorIonType=", PrecursorIonType)
