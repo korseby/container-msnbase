@@ -667,7 +667,7 @@ f.ms2_msp_to_metfrag <- function() {
     FragmentPeakMatchAbsoluteMassDeviation <- 0.001
     FragmentPeakMatchRelativeMassDeviation <- 10
     if (length(suspect_input_file) < 2) ScoreSuspectLists <- FALSE
-        else if (suspect_input_file == "None") ScoreSuspectLists <- as.character(suspect_input_file)
+        else if (suspect_input_file != "None") ScoreSuspectLists <- as.character(suspect_input_file)
         else ScoreSuspectLists <- FALSE
     MetFragDatabaseType <- "PubChem"
     if (ScoreSuspectLists) {
