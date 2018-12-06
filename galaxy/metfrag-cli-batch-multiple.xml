@@ -9,8 +9,9 @@
     <exit_code range="1:" level="fatal" description="Tool error" />
   </stdio>
   <command><![CDATA[
+    export samplename=`echo $metfrag_cli_batch_multiple_input_1.name | sed -e 's/\.mzML.*/\.mzML/'`;
     mkdir metfrag_cli_batch_multiple_output_folder_1;
-    bash /usr/local/bin/run_metfrag.sh -p $metfrag_cli_batch_multiple_input_1 -r metfrag_cli_batch_multiple_output_folder_1 -rn true -o $metfrag_cli_batch_multiple_output_1
+    bash echo /usr/local/bin/run_metfrag.sh -p $metfrag_cli_batch_multiple_input_1 -r metfrag_cli_batch_multiple_output_folder_1 -rn true -o $metfrag_cli_batch_multiple_output_1-tmp
     #if $metfrag_cli_batch_multiple_database_file != "None"
         -l "$metfrag_cli_batch_multiple_database_file"
     #end if
@@ -19,7 +20,9 @@
     #end if
     #if $additional_metfrag_scores != "None"
         -s "$additional_metfrag_scores"
-    #end if
+    #end if;
+    cat $metfrag_cli_batch_multiple_output_1-tmp | perl -pe "s/\$samplename(.+?)\,/\"\$samplename\"\,/" > $metfrag_cli_batch_multiple_output_1;
+head -n 2 $metfrag_cli_batch_multiple_output_1;
   ]]>
   </command>
   <inputs>
