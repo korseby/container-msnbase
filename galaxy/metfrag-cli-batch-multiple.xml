@@ -10,19 +10,26 @@
   </stdio>
   <command><![CDATA[
     export samplename=`echo $metfrag_cli_batch_multiple_input_1.name | sed -e 's/\.mzML.*/\.mzML/'`;
+    echo "\$samplename";
+    echo "$metfrag_cli_batch_multiple_input_1";
+    echo "$metfrag_cli_batch_multiple_output_1-tmp";
+    echo "$metfrag_cli_batch_multiple_output_1";
     mkdir metfrag_cli_batch_multiple_output_folder_1;
-    bash echo /usr/local/bin/run_metfrag.sh -p $metfrag_cli_batch_multiple_input_1 -r metfrag_cli_batch_multiple_output_folder_1 -rn true -o $metfrag_cli_batch_multiple_output_1-tmp
+    bash /usr/local/bin/run_metfrag.sh -p $metfrag_cli_batch_multiple_input_1 -r metfrag_cli_batch_multiple_output_folder_1 -rn true -o $metfrag_cli_batch_multiple_output_1-tmp
     #if $metfrag_cli_batch_multiple_database_file != "None"
-        -l "$metfrag_cli_batch_multiple_database_file"
+        -l "$metfrag_cli_batch_multiple_database_file";
     #end if
     #if $additionalparameters:
-        -a "$additionalparameters"
+        -a "$additionalparameters";
     #end if
     #if $additional_metfrag_scores != "None"
-        -s "$additional_metfrag_scores"
-    #end if;
+        -s "$additional_metfrag_scores";
+    #end if
+ls -al;
+echo " ... -p $metfrag_cli_batch_multiple_input_1 -r metfrag_cli_batch_multiple_output_folder_1 -rn true -o $metfrag_cli_batch_multiple_output_1-tmp";
+cat $metfrag_cli_batch_multiple_output_1-tmp;
+ls -al metfrag_cli_batch_multiple_output_folder_1/;
     cat $metfrag_cli_batch_multiple_output_1-tmp | perl -pe "s/\$samplename(.+?)\,/\"\$samplename\"\,/" > $metfrag_cli_batch_multiple_output_1;
-head -n 2 $metfrag_cli_batch_multiple_output_1;
   ]]>
   </command>
   <inputs>
@@ -35,7 +42,7 @@ head -n 2 $metfrag_cli_batch_multiple_output_1;
     </param>
   </inputs>
   <outputs>
-    <data name="metfrag_cli_batch_multiple_output_1" type="text" format="csv" label="MetFrag result file" />
+    <data name="metfrag_cli_batch_multiple_output_1" type="text" format="csv" label="${metfrag_cli_batch_multiple_input_1.display_name}.csv" />
   </outputs>
   <help>
 
