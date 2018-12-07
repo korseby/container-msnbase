@@ -195,7 +195,7 @@ metfrag_results <- metfrag_results_raw[0, ]
 metfrag_rtmz_unique <- unique(metfrag_results_raw[,c("parentRT","parentMZ")])
 for (i in 1:nrow(metfrag_rtmz_unique)) {
     temp <- metfrag_results_raw[c(which(metfrag_results_raw$parentRT==metfrag_rtmz_unique[i,"parentRT"] & metfrag_results_raw$parentMZ==metfrag_rtmz_unique[i,"parentMZ"])),]
-    temp <- temp[order(temp$OfflineMetFusionScore, decreasing=TRUE),]
+    temp <- temp[order(temp$Score, decreasing=TRUE),]
     temp <- temp[c(1:metfrag_hits_limit),]
     metfrag_results <- rbind(metfrag_results, temp)
 }
@@ -332,12 +332,12 @@ for (i in 1:nrow(metfrag_rtmz_unique)) {
                                                             '        \\begin{itemize}'))
         
         # MetFrag items
-        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('			\\item[] \\textbf{Identifier:} ',metfrag_results_entries[j,"Identifier"]),
+        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('			\\item[] \\textbf{PubChem Identifier:} ',metfrag_results_entries[j,"Identifier"]),
                                                             paste0('			\\item[] \\textbf{Synonyms:} ',metfrag_results_entries[j,"Synonyms"]),
                                                             paste0('			\\item[] \\textbf{Molecular Formula:} ',metfrag_results_entries[j,"MolecularFormula"]),
                                                             paste0('			\\item[] \\textbf{Primary compound class:} ', metfrag_results_entries[j,"ClassyFireDirect"]),
                                                             paste0('			\\item[] \\textbf{Alternative compound classes:} ', metfrag_results_entries[j,"ClassyFireAlternatives"]),
-                                                            paste0('			\\item[] \\textbf{MetFusion Score:} ',metfrag_results_entries[j,"OfflineMetFusionScore"]),
+                                                            paste0('			\\item[] \\textbf{Weighted MetFrag Score:} ',metfrag_results_entries[j,"Score"]),
                                                             paste0('			\\item[] \\textbf{Peaks explained:} ',metfrag_results_entries[j,"NoExplPeaks"], '/', metfrag_results_entries[j,"NumberPeaksUsed"]) ))
         
         # Entry footer
