@@ -64,7 +64,7 @@ f.synonyms_smiles <- function(smiles) {
     }
     
     # Synonyms
-    metfrag_synonyms <- gsub("[^[:alnum:][:blank:]+?&/\\-]", "", result$InformationList$Information$Synonym[[1]])
+    metfrag_synonyms <- gsub("[^[:lower:][:upper:][:digit:]/\\-]", "", result$InformationList$Information$Synonym[[1]])
     if (length(metfrag_synonyms) > 10)
         metfrag_synonyms <- metfrag_synonyms[c(1:10)]
     return(paste(metfrag_synonyms, sep="", collapse='; '))
