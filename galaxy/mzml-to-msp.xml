@@ -18,7 +18,7 @@ echo "mzmldir: \$mzmldir";
 echo "mzmlname: \$mzmlname";
 echo "samplename: \$samplename";
 echo "plotname: $plotfile";
-/usr/local/bin/mzml-to-msp.r /tmp/$mzmlfile.name $plotfile $mzabs $mzppm $rtabs $maxrtrange $maxmzrange $minrt $maxrt $minmz $maxmz $msmsintensitythreshold;
+/usr/local/bin/mzml-to-msp.r /tmp/$mzmlfile.name $plotfile $polarity $mzabs $mzppm $rtabs $maxrtrange $maxmzrange $minrt $maxrt $minmz $maxmz $msmsintensitythreshold;
 ls -r /tmp;
 cp /tmp/\$samplename.msp $mspfile;
   ]]>

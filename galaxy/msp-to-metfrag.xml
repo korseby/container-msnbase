@@ -10,12 +10,39 @@
   </stdio>
   <command><![CDATA[
 echo $suspectfile;
-/usr/local/bin/msp-to-metfrag.r $mspfile $suspectfile $metfragparameterfile;
+/usr/local/bin/msp-to-metfrag.r $mspfile $suspectfile $metfragparameterfile $minintthr $minprop $pretofrag $fragtofrag $polarity $DatabaseSearchRelativeMassDeviation $FragmentPeakMatchAbsoluteMassDeviation $FragmentPeakMatchRelativeMassDeviation $MetFragDatabaseType $FilterExcludedElements $FilterIncludedElements;
   ]]>
   </command>
   <inputs>
     <param name="mspfile" type="data" format="txt" optional="False" label="MSP file" help="MSP file" />
+    
+    <param name="minintthr" type="text" value="100" optional="False" label="intensity threshold" help="Minimum intensity of maximal MS2 peak" />
+    <param name="minprop" type="text" value="0.05" optional="False" label="minimum proportion" help="Minimum proportion of MS2 peaks" />
+    <param name="pretofrag" type="select" value="True" optional="False" label="precursor to fragments" help="Neutral losses precursor to fragments">
+      <option value="True" selected="True">True</option>
+      <option value="False">False</option>
+    </param>
+    <param name="fragtofrag" type="select" value="False" optional="False" label="fragments to fragments" help="Neutral losses fragments to fragments">
+      <option value="True">True</option>
+      <option value="False" selected="True">False</option>
+    </param>
+    
+    <param name="polarity" type="select" value="positive" optional="False" label="polarity" help="The polarity used for the mode of acquisition">
+      <option value="positive" selected="True">positive</option>
+      <option value="negative">negative</option>
+    </param>
+    <param name="DatabaseSearchRelativeMassDeviation" type="text" value="10" optional="False" label="Database Search Relative Mass Deviation" help="Database Search Relative Mass Deviation" />
+    <param name="FragmentPeakMatchAbsoluteMassDeviation" type="text" value="0.001" optional="False" label="Fragment Peak Match Absolute Mass Deviation" help="Fragment Peak Match Absolute Mass Deviation" />
+    <param name="FragmentPeakMatchRelativeMassDeviation" type="text" value="10" optional="False" label="Fragment Peak Match Relative Mass Deviation" help="Fragment Peak Match Relative Mass Deviation" />
     <param name="suspectfile" type="data" format="txt" optional="True" label="Suspect list" help="File containing a list of suspects" />
+    <param name="MetFragDatabaseType" type="select" value="PubChem" optional="False" label="MetFrag Database Type" help="Database">
+      <option value="PubChem" selected="True">PubChem</option>
+      <option value="KEGG">KEGG</option>
+      <option value="MetChem" selected="False">MetChem</option>
+      <option value="LocalCSV" selected="False">CSV</option>
+    </param>
+    <param name="FilterExcludedElements" type="text" value="Cl,Br,F" optional="False" label="Filter Excluded Elements" help="List of elements that should be excluded. Elements are comma separated without whitespace." />
+    <param name="FilterIncludedElements" type="text" value="C,H,N,O,P,S" optional="False" label="Filter Included Elements" help="List of elements that should be included. Elements are comma separated without whitespace." /> 
   </inputs>
   <outputs>
     <data name="metfragparameterfile" type="data" format="txt" label="${mspfile.display_name}_parameter.txt" />

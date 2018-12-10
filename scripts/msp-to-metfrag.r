@@ -29,9 +29,9 @@ options(stringAsfactors=FALSE, useFancyQuotes=FALSE)
 # ---------- Arguments and user variables ----------
 # Take in trailing command line arguments
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) < 3) {
+if (length(args) < 14) {
     print("Error! No or not enough arguments given.")
-    print("Usage: $0 input.msp suspect.list output.txt")
+    print("Usage: $0 input.msp suspect.list output.txt minintthr minprop pretofrag fragtofrag polarity DatabaseSearchRelativeMassDeviation FragmentPeakMatchAbsoluteMassDeviation FragmentPeakMatchRelativeMassDeviation MetFragDatabaseType FilterExcludedElements FilterIncludedElements")
     quit(save="no", status=1, runLast=FALSE)
 }
 
@@ -40,18 +40,45 @@ msp_input_file <- args[1]
 suspect_input_file <- args[2]
 metfrag_output_file <- args[3]
 
-# MS1 variables
-polarity <- "positive"
+# MSP variables
+minintthr <- as.numeric(args[4])
+minprop <- as.numeric(args[5])
+pretofrag <- as.logical(args[6])
+fragtofrag <- as.logical(args[7])
+
+# MetFrag variables
+polarity <- as.character(args[8])
 pol <- substr(x=polarity, start=1, stop=3)
+if (pol == "pos")
+	IsPositiveIonMode <- "True"
+else
+	IsPositiveIonMode <- "False"
 
-# MS2 variables
-mzabs <- 0.01                         # Absolute mass error (in seconds) used for merging MS/MS spectra
-mzppm <- 5                            # ppm error used for merging MS/MS spectra
-rtabs <- 5                            # Retention time error (in seconds) used for merging MS/MS spectra
-msms.intensity.threshold <- 100       # Minimum intensity value for MS/MS peaks
+DatabaseSearchRelativeMassDeviation <- as.numeric(args[9])
+FragmentPeakMatchAbsoluteMassDeviation <- as.numeric(args[10])
+FragmentPeakMatchRelativeMassDeviation <- as.numeric(args[11])
 
-# Preparations for plotting
-par(mfrow=c(1,1), mar=c(4,4,4,1), oma=c(0,0,0,0), cex.axis=0.9, cex=0.8)
+MetFragDatabaseType <- as.character(args[12])
+
+if (nchar(suspect_input_file) < 2) ScoreSuspectLists <- FALSE
+	else if (suspect_input_file == "None") ScoreSuspectLists <- FALSE
+	else ScoreSuspectLists <- TRUE
+
+if (ScoreSuspectLists) {
+	MetFragScoreTypes <- "FragmenterScore,OfflineMetFusionScore,SuspectListScore"
+	MetFragScoreWeights <- "1.0,1.0,1.0"
+} else {
+	MetFragScoreTypes <- "FragmenterScore,OfflineMetFusionScore"
+	MetFragScoreWeights <- "1.0,1.0"
+}
+
+MetFragPeakListReader <- "de.ipbhalle.metfraglib.peaklistreader.FilteredStringTandemMassPeakListReader"
+MetFragCandidateWriter <- "CSV"
+MaximumTreeDepth <- 2
+
+FilterExcludedElements <- as.character(args[13])
+FilterIncludedElements <- as.character(args[14])
+MetFragPreProcessingCandidateFilter <- "UnconnectedCompoundFilter,IsotopeFilter,ElementInclusionOptionalFilter,ElementExclusionFilter"
 
 
 
@@ -632,26 +659,12 @@ parseMSP <- function(fileSpectra, minimumIntensityOfMaximalMS2peak, minimumPropo
 
 # ---------- Convert MSP to MetFrag parameter ----------
 f.ms2_msp_to_metfrag <- function() {
-    # Box parameters
+    # Read MSP
     parameterSet <- list()
-    ############### TODO: GALAXY PARAMETER
-    parameterSet$minimumIntensityOfMaximalMS2peak                  <- msms.intensity.threshold
-    parameterSet$minimumProportionOfMS2peaks                       <- 0.05
-    parameterSet$mzDeviationAbsolute_grouping                      <- mzabs
-    parameterSet$mzDeviationInPPM_grouping                         <- mzppm
-    parameterSet$doPrecursorDeisotoping                            <- TRUE
-    parameterSet$mzDeviationAbsolute_precursorDeisotoping          <- 0.001
-    parameterSet$mzDeviationInPPM_precursorDeisotoping             <- 10
-    parameterSet$maximumRtDifference                               <- 0.02
-    parameterSet$doMs2PeakGroupDeisotoping                         <- TRUE
-    parameterSet$mzDeviationAbsolute_ms2PeakGroupDeisotoping       <- 0.01
-    parameterSet$mzDeviationInPPM_ms2PeakGroupDeisotoping          <- 10
-    parameterSet$proportionOfMatchingPeaks_ms2PeakGroupDeisotoping <- 0.9
-    parameterSet$mzDeviationAbsolute_mapping                       <- 0.01
-    parameterSet$minimumNumberOfMS2PeaksPerGroup                   <- 1
-    parameterSet$neutralLossesPrecursorToFragments                 <- TRUE
-    parameterSet$neutralLossesFragmentsToFragments                 <- FALSE
-    ############### TODO: GALAXY PARAMETER
+    parameterSet$minimumIntensityOfMaximalMS2peak                  <- minintthr
+    parameterSet$minimumProportionOfMS2peaks                       <- minprop
+    parameterSet$neutralLossesPrecursorToFragments                 <- pretofrag
+    parameterSet$neutralLossesFragmentsToFragments                 <- fragtofrag
     
     msp_file <- parseMSP(
         fileSpectra = msp_input_file, 
@@ -662,30 +675,7 @@ f.ms2_msp_to_metfrag <- function() {
         progress = TRUE
     )
     
-    ############### TODO: GALAXY PARAMETER
-    DatabaseSearchRelativeMassDeviation <- 10
-    FragmentPeakMatchAbsoluteMassDeviation <- 0.001
-    FragmentPeakMatchRelativeMassDeviation <- 10
-    if (nchar(suspect_input_file) < 2) ScoreSuspectLists <- FALSE
-        else if (suspect_input_file == "None") ScoreSuspectLists <- FALSE
-        else ScoreSuspectLists <- TRUE
-    MetFragDatabaseType <- "PubChem"
-    if (ScoreSuspectLists) {
-        MetFragScoreTypes <- "FragmenterScore,OfflineMetFusionScore,SuspectListScore"
-        MetFragScoreWeights <- "1.0,1.0,1.0"
-    } else {
-        MetFragScoreTypes <- "FragmenterScore,OfflineMetFusionScore"
-        MetFragScoreWeights <- "1.0,1.0"
-    }
-    IsPositiveIonMode <- "True"
-    MetFragPeakListReader <- "de.ipbhalle.metfraglib.peaklistreader.FilteredStringTandemMassPeakListReader"
-    MetFragCandidateWriter <- "CSV"
-    MaximumTreeDepth <- 2
-    FilterExcludedElements <- "Cl,Br,F"
-    FilterIncludedElements <- "C,H,N,O,P,S"
-    MetFragPreProcessingCandidateFilter <- "UnconnectedCompoundFilter,IsotopeFilter,ElementInclusionOptionalFilter,ElementExclusionFilter"
-    ############### TODO: GALAXY PARAMETER
-
+    # Write MetFrag parameter file
     metfrag_parameter_file <- NULL
     for (i in 1:msp_file$numberOfSpectra) {
         NeutralPrecursorMass <- msp_file$precursorMz[i]
@@ -722,8 +712,6 @@ f.ms2_msp_to_metfrag <- function() {
     }
     
     writeLines(text=metfrag_parameter_file, con=file(metfrag_output_file))
-    
-    # Send parameter file to metfrag-cli-batch-multiple
 }
 
 
