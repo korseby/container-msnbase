@@ -16,26 +16,26 @@ echo $suspectfile;
   <inputs>
     <param name="mspfile" type="data" format="txt" optional="False" label="MSP file" help="MSP file" />
     
-    <param name="minintthr" type="text" value="100" optional="False" label="intensity threshold" help="Minimum intensity of maximal MS2 peak" />
-    <param name="minprop" type="text" value="0.05" optional="False" label="minimum proportion" help="Minimum proportion of MS2 peaks" />
-    <param name="pretofrag" type="select" value="True" optional="False" label="precursor to fragments" help="Neutral losses precursor to fragments">
+    <param name="minintthr" type="text" value="1000" optional="False" label="Intensity threshold of largest peak" help="The threshold the largest peak must have to be recognized" />
+    <param name="minprop" type="text" value="0.05" optional="False" label="Minimum proportion of peaks" help="All peaks less than a percentage value with regard to the largest peak are rejected" />
+    <param name="pretofrag" type="select" value="True" optional="False" label="Neutral losses of precursor to fragments" help="Add neutral losses of precursor to fragments of the spectrum">
       <option value="True" selected="True">True</option>
       <option value="False">False</option>
     </param>
-    <param name="fragtofrag" type="select" value="False" optional="False" label="fragments to fragments" help="Neutral losses fragments to fragments">
+    <param name="fragtofrag" type="select" value="False" optional="False" label="Neutral losses of fragments to fragments" help="Add neutral losses among fragments to fragments of the spectrum">
       <option value="True">True</option>
       <option value="False" selected="True">False</option>
     </param>
     
-    <param name="polarity" type="select" value="positive" optional="False" label="polarity" help="The polarity used for the mode of acquisition">
+    <param name="polarity" type="select" value="positive" optional="False" label="Polarity" help="The polarity used for the mode of acquisition">
       <option value="positive" selected="True">positive</option>
       <option value="negative">negative</option>
     </param>
-    <param name="DatabaseSearchRelativeMassDeviation" type="text" value="10" optional="False" label="Database Search Relative Mass Deviation" help="Database Search Relative Mass Deviation" />
-    <param name="FragmentPeakMatchAbsoluteMassDeviation" type="text" value="0.001" optional="False" label="Fragment Peak Match Absolute Mass Deviation" help="Fragment Peak Match Absolute Mass Deviation" />
-    <param name="FragmentPeakMatchRelativeMassDeviation" type="text" value="10" optional="False" label="Fragment Peak Match Relative Mass Deviation" help="Fragment Peak Match Relative Mass Deviation" />
+    <param name="DatabaseSearchRelativeMassDeviation" type="text" value="10" optional="False" label="Database Search Relative Mass Deviation" help="A value in ppm that defines the deviation of theoretical masses in the database vs. the measured masses" />
+    <param name="FragmentPeakMatchAbsoluteMassDeviation" type="text" value="0.001" optional="False" label="Fragment Peak Match Absolute Mass Deviation" help="Absolute mass deviation in Dalton of theoretical fragment peaks vs. measured fragment peaks" />
+    <param name="FragmentPeakMatchRelativeMassDeviation" type="text" value="10" optional="False" label="Fragment Peak Match Relative Mass Deviation" help="Relative mass deviation in ppm of theoretical fragment peaks vs. measured fragment peaks" />
     <param name="suspectfile" type="data" format="txt" optional="True" label="Suspect list" help="File containing a list of suspects" />
-    <param name="MetFragDatabaseType" type="select" value="PubChem" optional="False" label="MetFrag Database Type" help="Database">
+    <param name="MetFragDatabaseType" type="select" value="PubChem" optional="False" label="MetFrag Database Type" help="Database to choose from">
       <option value="PubChem" selected="True">PubChem</option>
       <option value="KEGG">KEGG</option>
       <option value="MetChem" selected="False">MetChem</option>
@@ -80,20 +80,63 @@ Input files
 Parameters
 ----------
 	  
-XCMS-Set file
-	| A rdata file with XCMS-Set objects that were grouped by **xcms-collect-peaks**
+Intensity threshold of largest peak
+        | The threshold the largest peak must have to be recognized.
+        |
+
+Minimum proportion of peaks
+        | All peaks less than a percentage value with regard to the largest peak are rejected.
+        |
+
+Neutral losses of precursor to fragments
+        | Add neutral losses of precursor to fragments of the spectrum.
+        |
+
+Neutral losses of fragments to fragments
+        | Add neutral losses among fragments to fragments of the spectrum.
+        |
+
+Polarity
+        | The polarity used for the mode of acquisition.
+        |
+
+Database Search Relative Mass Deviation
+        | A value in ppm that defines the deviation of theoretical masses in the database vs. the measured masses.
+        |
+
+Fragment Peak Match Absolute Mass Deviation
+        | Absolute mass deviation in Dalton of theoretical fragment peaks vs. measured fragment peaks.
+        |
+
+Fragment Peak Match Relative Mass Deviation
+        | Relative mass deviation in ppm of theoretical fragment peaks vs. measured fragment peaks.
+        |
+
+Suspect list
+        | File containing a list of suspects.
+        |
+
+MetFrag Database Type
+        | Database to choose from.
         |
 
 ------------
 Output files
 ------------
-	
-xcmssplit_input_1.rdata
-	| (Multiple) rdata file(s) containing one XCMS-Set object each
-        |
 
++------------------------------------------+--------+
+| Files                                    | Format |
++==========================================+========+
+| 1)  (Multiple) MetFrag parameter list(s) |  TXT   |
++------------------------------------------+--------+
 
 ---------------------------------------------------
+
+-------
+Changes
+-------
+
+Version: 1.0
 
   </help>
 </tool>

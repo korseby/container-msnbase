@@ -25,20 +25,20 @@ cp /tmp/\$samplename.msp $mspfile;
   </command>
   <inputs>
     <param name="mzmlfile" type="data" format="mzml" optional="False" label="mzML file" help="(Set of) mzML file(s)" />
-    <param name="polarity" type="select" value="positive" optional="False" label="polarity" help="The polarity used for the mode of acquisition">
+    <param name="polarity" type="select" value="positive" optional="False" label="Polarity" help="The polarity used for the mode of acquisition">
       <option value="positive" selected="True">positive</option>
       <option value="negative">negative</option>
     </param>
-    <param name="mzabs" type="text" value="0.01" optional="False" label="absolute mass error" help="Absolute mass error (in seconds) used for merging MS/MS spectra" />
+    <param name="mzabs" type="text" value="0.01" optional="False" label="Absolute mass error" help="Absolute mass error (in seconds) used for merging MS/MS spectra" />
     <param name="mzppm" type="text" value="5" optional="False" label="ppm error" help="ppm error used for merging MS/MS spectra" />
-    <param name="rtabs" type="text" value="5" optional="False" label="retention time error" help="Retention time error (in seconds) used for merging MS/MS spectra" />
-    <param name="maxrtrange" type="text" value="20" optional="False" label="retention time range" help="Permitted retention time window (in seconds) of grouped MS1 precursors" />
+    <param name="rtabs" type="text" value="5" optional="False" label="Retention time error" help="Retention time error (in seconds) used for merging MS/MS spectra" />
+    <param name="maxrtrange" type="text" value="20" optional="False" label="Retention time range" help="Permitted retention time window (in seconds) of grouped MS1 precursors" />
     <param name="maxmzrange" type="text" value="0.01" optional="False" label="m/z range" help="Permitted m/z window of grouped MS1 precursors" />
-    <param name="minrt" type="text" value="10" optional="False" label="minimum retention time" help="Minimum retention time for selected precursors" />
-    <param name="maxrt" type="text" value="1020" optional="False" label="maximum retention time" help="Maximum retention time for selected precursors" />
-    <param name="minmz" type="text" value="50" optional="False" label="minimum m/z" help="Minimum m/z value for selected precursors" />
-    <param name="maxmz" type="text" value="1500" optional="False" label="maximum m/z" help="Maximum m/z value for selected precursors" />
-    <param name="msmsintensitythreshold" type="text" value="100" optional="False" label="intensity cut-off" help="Minimum intensity value for MS/MS peaks" />
+    <param name="minrt" type="text" value="10" optional="False" label="Minimum retention time" help="Minimum retention time for selected precursors" />
+    <param name="maxrt" type="text" value="1020" optional="False" label="Maximum retention time" help="Maximum retention time for selected precursors" />
+    <param name="minmz" type="text" value="50" optional="False" label="Minimum m/z" help="Minimum m/z value for selected precursors" />
+    <param name="maxmz" type="text" value="1500" optional="False" label="Maximum m/z" help="Maximum m/z value for selected precursors" />
+    <param name="msmsintensitythreshold" type="text" value="100" optional="False" label="Intensity cut-off" help="Minimum intensity value for MS/MS peaks" />
   </inputs>
   <outputs>
 <!--
@@ -82,60 +82,69 @@ Input files
 Parameters
 ----------
 
-polarity
-        | The polarity used for the mode of acquisition
+Polarity
+        | The polarity used for the mode of acquisition.
         |
 
-absolute mass error
-        | Absolute mass error (in seconds) used for merging MS/MS spectra
+Absolute mass error
+        | Absolute mass error (in seconds) used for merging MS/MS spectra.
         |
 
 ppm error
-        | ppm error used for merging MS/MS spectra
+        | ppm error used for merging MS/MS spectra.
         |
 
-retention time error
-        | Retention time error (in seconds) used for merging MS/MS spectra
+Retention time error
+        | Retention time error (in seconds) used for merging MS/MS spectra.
         |
 
-retention time range
-        | Permitted retention time window (in seconds) of grouped MS1 precursors
+Retention time range
+        | Permitted retention time window (in seconds) of grouped MS1 precursors.
         |
 
 m/z range
-        | Permitted m/z window of grouped MS1 precursors
+        | Permitted m/z window of grouped MS1 precursors.
         |
 
-minimum retention time
-        | Minimum retention time for selected precursors
+Minimum retention time
+        | Minimum retention time for selected precursors.
         |
 
-maximum retention time
-        | Maximum retention time for selected precursors
+Maximum retention time
+        | Maximum retention time for selected precursors.
         |
 
-minimum m/z
-        | Minimum m/z value for selected precursors
+Minimum m/z
+        | Minimum m/z value for selected precursors.
         |
 
-maximum m/z
-        | Maximum m/z value for selected precursors
+Maximum m/z
+        | Maximum m/z value for selected precursors.
         |
 
-intensity cut-off
-        | Minimum intensity value for MS/MS peaks
+Intensity cut-off
+        | Minimum intensity value for MS/MS peaks.
         |
 
 ------------
 Output files
 ------------
-	
-xcmssplit_input_1.rdata
-	| (Multiple) rdata file(s) containing one XCMS-Set object each
-        |
 
++-----------------------------------------------------------------------+--------+
+| Files                                                                 | Format |
++=======================================================================+========+
+| 1)  (Multiple) MSP file(s) containing the merged spectra              |  MSP   |
++-----------------------------------------------------------------------+--------+
+| 2)  (Multiple) PDF file(s) containing a m/z-rt plot of merged spectra |  PDF   |
++-----------------------------------------------------------------------+--------+
 
 ---------------------------------------------------
+
+-------
+Changes
+-------
+
+Version: 1.0
 
   </help>
 </tool>
