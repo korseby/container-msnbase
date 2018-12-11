@@ -193,6 +193,7 @@ metfrag_results_raw <- read.table(file=metfrag_results_file, quote='\"', sep=','
 # Only take the entries with the highest scores
 metfrag_results <- metfrag_results_raw[0, ]
 metfrag_rtmz_unique <- unique(metfrag_results_raw[,c("parentRT","parentMZ")])
+metfrag_rtmz_unique <- metfrag_rtmz_unique[order(metfrag_rtmz_unique$parentRT), ]
 for (i in 1:nrow(metfrag_rtmz_unique)) {
     temp <- metfrag_results_raw[c(which(metfrag_results_raw$parentRT==metfrag_rtmz_unique[i,"parentRT"] & metfrag_results_raw$parentMZ==metfrag_rtmz_unique[i,"parentMZ"])),]
     temp <- temp[order(temp$Score, decreasing=TRUE),]
@@ -284,6 +285,7 @@ cat(sep='\n', file=metfrag_tex_file, c('% Header',
 '\\usepackage[english]{babel}',
 '\\usepackage{lmodern}',
 '\\usepackage{tabularx}',
+'\\usepackage{longtable}',
 '\\usepackage[a4paper,total={170mm,257mm},left=20mm,top=20mm,margin=0.5in]{geometry}',
 '\\usepackage{hyperref}',
 '\\usepackage{graphicx}',
@@ -295,20 +297,47 @@ cat(sep='\n', file=metfrag_tex_file, c('% Header',
 cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('\\begin{center}\\section*{',metfrag_sample_name,'}\\end{center}'),
                                                     ''))
 
+# Show summary at the beginning
+cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('\\begin{longtable}{ p{0.5cm} | p{1.5cm} | p{1.5cm} | p{3cm} | p{4.5cm} | p{3cm} }',
+                                                    paste0("No", " & ", "RT", " & ", "MZ", " & ", "Mol. formula", " & ", "Most abundand class", " & ", "Explained peaks", " \\\\"),
+                                                    '\\hline'))
+count <- 0
+for (i in 1:nrow(metfrag_rtmz_unique)) {
+    count <- count + 1
+    metfrag_results_entries <- metfrag_results[c(which(metfrag_results$parentRT==metfrag_rtmz_unique[i,"parentRT"] & metfrag_results$parentMZ==metfrag_rtmz_unique[i,"parentMZ"])),]
+    
+    rt <- metfrag_results_entries$parentRT[1]
+    mz <- metfrag_results_entries$parentMZ[1]
+    most_abundant_class <- metfrag_results_entries$ClassyFireDirect
+    most_abundant_class <- metfrag_results_entries$ClassyFireDirect[sort(table(most_abundant_class))[1]]
+    mean_explained_peaks <- round(mean(metfrag_results_entries$NoExplPeaks, na.rm=TRUE), digits=0)
+    number_peaks <- metfrag_results_entries$NumberPeaksUsed
+    number_peaks <- metfrag_results_entries$NumberPeaksUsed[sort(table(number_peaks))[1]]
+    molecular_formula <- metfrag_results_entries$MolecularFormula[1]
+    
+    cat(sep='\n', file=metfrag_tex_file, append=TRUE, paste0(count, " & ", rt, " & ", mz, " & ", molecular_formula, " & ", most_abundant_class, " & ", paste0(mean_explained_peaks,"/",number_peaks), " \\\\"))
+}
+
+cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('\\hline',
+                                                    '\\end{longtable}',
+                                                    '\\ \\\\',
+                                                    '\\ \\\\'))
+
 # Process MetFrag entries
 print("Creating MetFrag TeX file...")
 for (i in 1:nrow(metfrag_rtmz_unique)) {
+    # Write entries for RT, MZ pairs
+    metfrag_rtmz_unique[i,]
+    metfrag_results_entries <- metfrag_results[c(which(metfrag_results$parentRT==metfrag_rtmz_unique[i,"parentRT"] & metfrag_results$parentMZ==metfrag_rtmz_unique[i,"parentMZ"])),]
+
     # Sort for RT, MZ entries
     cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('\\noindent\\rule{\\textwidth}{0.4pt}',
-                                                        paste0('\\subsection*{\\textbf{RT:} ',metfrag_results[i,"parentRT"], ', \\textbf{MZ:} ', metfrag_results[i,"parentMZ"], '}'),
+                                                        paste0('\\subsection*{\\textbf{RT:} ',metfrag_results_entries[1,"parentRT"], ', \\textbf{MZ:} ', metfrag_results_entries[1,"parentMZ"], '}'),
                                                         '\\ \\\\',
                                                         '\\ \\\\',
                                                         ''))
 
-    # Write entries for RT, MZ pairs
-    metfrag_rtmz_unique[i,]
-    metfrag_results_entries <- metfrag_results[c(which(metfrag_results$parentRT==metfrag_rtmz_unique[i,"parentRT"] & metfrag_results$parentMZ==metfrag_rtmz_unique[i,"parentMZ"])),]
-    
+    # Process each entry
     for (j in c(1:nrow(metfrag_results_entries))) {
         # Entry header
         cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('% Entry: ',j),
