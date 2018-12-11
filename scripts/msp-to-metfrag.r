@@ -49,10 +49,11 @@ fragtofrag <- as.logical(args[7])
 # MetFrag variables
 polarity <- as.character(args[8])
 pol <- substr(x=polarity, start=1, stop=3)
-if (pol == "pos")
+if (pol == "pos") {
 	IsPositiveIonMode <- "True"
-else
+} else {
 	IsPositiveIonMode <- "False"
+}
 
 DatabaseSearchRelativeMassDeviation <- as.numeric(args[9])
 FragmentPeakMatchAbsoluteMassDeviation <- as.numeric(args[10])
@@ -60,9 +61,13 @@ FragmentPeakMatchRelativeMassDeviation <- as.numeric(args[11])
 
 MetFragDatabaseType <- as.character(args[12])
 
-if (nchar(suspect_input_file) < 2) ScoreSuspectLists <- FALSE
-	else if (suspect_input_file == "None") ScoreSuspectLists <- FALSE
-	else ScoreSuspectLists <- TRUE
+if (nchar(suspect_input_file) < 2) {
+	ScoreSuspectLists <- FALSE
+} else if (suspect_input_file == "None") {
+	ScoreSuspectLists <- FALSE
+} else {
+	ScoreSuspectLists <- TRUE
+}
 
 if (ScoreSuspectLists) {
 	MetFragScoreTypes <- "FragmenterScore,OfflineMetFusionScore,SuspectListScore"
