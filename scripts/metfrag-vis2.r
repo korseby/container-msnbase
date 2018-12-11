@@ -274,6 +274,7 @@ if (metfrag_classyfire_method == TRUE) {
 }
 
 
+
 # ---------- Generate TeX file ----------
 # Process TeX file
 metfrag_tex_file <- "output/metfrag_vis.tex"
@@ -298,8 +299,8 @@ cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('\\begin{center}\\sec
                                                     ''))
 
 # Show summary at the beginning
-cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('\\begin{longtable}{ p{0.5cm} | p{1.5cm} | p{1.5cm} | p{3cm} | p{4.5cm} | p{3cm} }',
-                                                    paste0("No", " & ", "RT", " & ", "MZ", " & ", "Mol. formula", " & ", "Most abundand class", " & ", "Explained peaks", " \\\\"),
+cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('\\begin{longtable}{ p{0.5cm} | p{1.5cm} | p{1.5cm} | p{3cm} | p{6cm} | p{1cm} }',
+                                                    paste0("No", " & ", "RT", " & ", "MZ", " & ", "Mol. Formula", " & ", "Most abundand class", " & ", "Peaks", " \\\\"),
                                                     '\\hline'))
 count <- 0
 for (i in 1:nrow(metfrag_rtmz_unique)) {
@@ -308,12 +309,12 @@ for (i in 1:nrow(metfrag_rtmz_unique)) {
     
     rt <- metfrag_results_entries$parentRT[1]
     mz <- metfrag_results_entries$parentMZ[1]
+    molecular_formula <- metfrag_results_entries$MolecularFormula[1]
     most_abundant_class <- metfrag_results_entries$ClassyFireDirect
     most_abundant_class <- metfrag_results_entries$ClassyFireDirect[sort(table(most_abundant_class))[1]]
     mean_explained_peaks <- round(mean(metfrag_results_entries$NoExplPeaks, na.rm=TRUE), digits=0)
     number_peaks <- metfrag_results_entries$NumberPeaksUsed
     number_peaks <- metfrag_results_entries$NumberPeaksUsed[sort(table(number_peaks))[1]]
-    molecular_formula <- metfrag_results_entries$MolecularFormula[1]
     
     cat(sep='\n', file=metfrag_tex_file, append=TRUE, paste0(count, " & ", rt, " & ", mz, " & ", molecular_formula, " & ", most_abundant_class, " & ", paste0(mean_explained_peaks,"/",number_peaks), " \\\\"))
 }
@@ -361,12 +362,12 @@ for (i in 1:nrow(metfrag_rtmz_unique)) {
                                                             '        \\begin{itemize}'))
         
         # MetFrag items
-        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('			\\item[] \\textbf{PubChem Identifier:} ',metfrag_results_entries[j,"Identifier"]),
+        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('			\\item[] \\textbf{Identifier:} ',metfrag_results_entries[j,"Identifier"]),
                                                             paste0('			\\item[] \\textbf{Synonyms:} ',metfrag_results_entries[j,"Synonyms"]),
                                                             paste0('			\\item[] \\textbf{Molecular Formula:} ',metfrag_results_entries[j,"MolecularFormula"]),
                                                             paste0('			\\item[] \\textbf{Primary compound class:} ', metfrag_results_entries[j,"ClassyFireDirect"]),
                                                             paste0('			\\item[] \\textbf{Alternative compound classes:} ', metfrag_results_entries[j,"ClassyFireAlternatives"]),
-                                                            paste0('			\\item[] \\textbf{Weighted MetFrag Score:} ',metfrag_results_entries[j,"Score"]),
+                                                            paste0('			\\item[] \\textbf{MetFusion Score:} ',metfrag_results_entries[j,"OfflineMetFusionScore"]),
                                                             paste0('			\\item[] \\textbf{Peaks explained:} ',metfrag_results_entries[j,"NoExplPeaks"], '/', metfrag_results_entries[j,"NumberPeaksUsed"]) ))
         
         # Entry footer
