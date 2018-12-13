@@ -29,9 +29,9 @@ options(stringAsfactors=FALSE, useFancyQuotes=FALSE)
 # ---------- Arguments and user variables ----------
 # Take in trailing command line arguments
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) < 14) {
+if (length(args) < 17) {
     print("Error! No or not enough arguments given.")
-    print("Usage: $0 input.msp suspect.list output.txt minintthr minprop pretofrag fragtofrag polarity DatabaseSearchRelativeMassDeviation FragmentPeakMatchAbsoluteMassDeviation FragmentPeakMatchRelativeMassDeviation MetFragDatabaseType FilterExcludedElements FilterIncludedElements")
+    print("Usage: $0 input.msp suspect.list output.txt minintthr minprop pretofrag fragtofrag polarity PrecursorIonType DatabaseSearchRelativeMassDeviation FragmentPeakMatchAbsoluteMassDeviation FragmentPeakMatchRelativeMassDeviation MetFragScoreTypes MetFragScoreWeights MetFragDatabaseType FilterExcludedElements FilterIncludedElements")
     quit(save="no", status=1, runLast=FALSE)
 }
 
@@ -54,12 +54,16 @@ if (pol == "pos") {
 } else {
 	IsPositiveIonMode <- "False"
 }
+PrecursorIonType <- as.character(args[9])
+PrecursorIonType <- gsub("__ob__", "[", PrecursorIonType)             # fix that Galaxy replaces [ with __ob__
+PrecursorIonType <- gsub("__cb__", "]", PrecursorIonType)             # fix that Galaxy replaces ] with __cb__
 
-DatabaseSearchRelativeMassDeviation <- as.numeric(args[9])
-FragmentPeakMatchAbsoluteMassDeviation <- as.numeric(args[10])
-FragmentPeakMatchRelativeMassDeviation <- as.numeric(args[11])
+DatabaseSearchRelativeMassDeviation <- as.numeric(args[10])
+FragmentPeakMatchAbsoluteMassDeviation <- as.numeric(args[11])
+FragmentPeakMatchRelativeMassDeviation <- as.numeric(args[12])
 
-MetFragDatabaseType <- as.character(args[12])
+MetFragScoreTypes <- as.character(args[13])
+MetFragScoreWeights <- as.character(args[14])
 
 if (nchar(suspect_input_file) < 2) {
 	ScoreSuspectLists <- FALSE
@@ -69,20 +73,14 @@ if (nchar(suspect_input_file) < 2) {
 	ScoreSuspectLists <- TRUE
 }
 
-if (ScoreSuspectLists) {
-	MetFragScoreTypes <- "FragmenterScore,OfflineMetFusionScore,SuspectListScore"
-	MetFragScoreWeights <- "1.0,1.0,1.0"
-} else {
-	MetFragScoreTypes <- "FragmenterScore,OfflineMetFusionScore"
-	MetFragScoreWeights <- "1.0,1.0"
-}
+MetFragDatabaseType <- as.character(args[15])
 
 MetFragPeakListReader <- "de.ipbhalle.metfraglib.peaklistreader.FilteredStringTandemMassPeakListReader"
 MetFragCandidateWriter <- "CSV"
 MaximumTreeDepth <- 2
 
-FilterExcludedElements <- as.character(args[13])
-FilterIncludedElements <- as.character(args[14])
+FilterExcludedElements <- as.character(args[16])
+FilterIncludedElements <- as.character(args[17])
 MetFragPreProcessingCandidateFilter <- "UnconnectedCompoundFilter,IsotopeFilter,ElementInclusionOptionalFilter,ElementExclusionFilter"
 
 
@@ -684,7 +682,7 @@ f.ms2_msp_to_metfrag <- function() {
     metfrag_parameter_file <- NULL
     for (i in 1:msp_file$numberOfSpectra) {
         NeutralPrecursorMass <- msp_file$precursorMz[i]
-        PrecursorIonType <- msp_file$spectraList[[i]]$adduct
+        #PrecursorIonType <- msp_file$spectraList[[i]]$adduct
         PeakListString <- gsub(" ", "_", msp_file$spectraList[[i]]$spectrumString)
         SampleName <- paste0("outputfolder/",
                i, "_",
