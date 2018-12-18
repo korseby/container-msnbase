@@ -29,9 +29,9 @@ options(stringAsfactors=FALSE, useFancyQuotes=FALSE)
 # ---------- Arguments and user variables ----------
 # Take in trailing command line arguments
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) < 13) {
+if (length(args) < 14) {
     print("Error! No or not enough arguments given.")
-    print("Usage: $0 working_dir plot_file polarity mzabs mzppm rtabs max.rt.range max.mz.range min.rt max.rt min.mz max.mz msms.intensity.threshold")
+    print("Usage: $0 working_dir plot_file polarity mzabs mzppm rtabs max.rt.range max.mz.range min.rt max.rt min.mz max.mz msms.intensity.threshold MergeSpectra")
     quit(save="no", status=1, runLast=FALSE)
 }
 
@@ -62,6 +62,7 @@ max.rt <- as.numeric(args[10])                    # Maximum retention time for s
 min.mz <- as.numeric(args[11])                    # Minimum m/z value for selected precursors
 max.mz <- as.numeric(args[12])                    # Maximum m/z value for selected precursors
 msms.intensity.threshold <- as.numeric(args[13])  # Minimum intensity value for MS/MS peaks
+MergeSpectra <- as.logical(args[14])              # Merge spectra enabled or disabled
 
 # Preparations for plotting
 par(mfrow=c(1,1), mar=c(4,4,4,1), oma=c(0,0,0,0), cex.axis=0.9, cex=0.8)
@@ -264,18 +265,17 @@ merge.spectra <- function(spectra, mzabs, mzppm, rtabs, max.rt.range, max.mz.ran
 f.ms2_find_spectra <- function() {
     # Find all MS/MS spectra in each sample
     msms_spectra <- list()
-    msms_spectra <- foreach(i=1:length(mzml_files)) %dopar% {
-        readMSData(files=mzml_files[i], msLevel=2, verbose=TRUE)
-    }
+    msms_spectra <- readMSData(files=mzml_files, msLevel=2, verbose=TRUE)
     
     # Merge MS/MS spectra in each sample
     msms_merged <- list()
-    msms_merged <- foreach(i=1:length(mzml_files)) %dopar% {
-        #print(paste("Merging MS/MS spectras in",msms_spectra[[i]]@phenoData@data$sampleNames,"..."))
-        merge.spectra(msms_spectra[[i]], mzabs, mzppm, rtabs, max.rt.range, max.mz.range, min.rt, max.rt, min.mz, max.mz, msms.intensity.threshold)
+    if (MergeSpectra == TRUE) {
+        msms_merged <- merge.spectra(msms_spectra, mzabs, mzppm, rtabs, max.rt.range, max.mz.range, min.rt, max.rt, min.mz, max.mz, msms.intensity.threshold)
+    } else {
+        msms_merged <- collect.spectra.lists(msms_spectra, mzabs, mzppm, rtabs)
+        msms_merged <- lapply(msms_merged, FUN=function(x) { x <- x[[1]] })
     }
-    
-    
+
     # Return variables
     msms_spectra <<- msms_spectra
     msms_merged <<- msms_merged
@@ -286,25 +286,19 @@ f.ms2_find_spectra <- function() {
 # ---------- Plot MS/MS spectra ----------
 f.ms2_plot_spectra <- function() {
     # For each profile
-    msms_plot <- list()
-    msms_plot <- foreach(i=1:length(mzml_files)) %dopar% {
-        temp <- as.data.frame(matrix(unlist(lapply(msms_merged[[i]], FUN=function(x) { x <- data.frame(mz=x@precursorMz, rt=x@rt) } )), ncol=2))
-        colnames(temp) <- c("mz", "rt")
-        temp <- temp[order(temp$rt), ]
-        return(temp)
-    }
+    msms_plot <- as.data.frame(matrix(unlist(lapply(msms_merged, FUN=function(x) { x <- data.frame(mz=x@precursorMz, rt=x@rt) } )), ncol=2))
+    colnames(msms_plot) <- c("mz", "rt")
+    msms_plot <- msms_plot[order(msms_plot$rt), ]
     
     pdf(plot_file, encoding="ISOLatin1", pointsize=10, width=5, height=5, family="Helvetica")
-    for (i in c(1:length(mzml_files))) {
-        x_min <- floor(min(msms_plot[[i]][,"rt"]))
-        x_max <- ceiling(max(msms_plot[[i]][,"rt"]))
-        y_min <- floor(min(msms_plot[[i]][,"mz"]))
-        y_max <- ceiling(max(msms_plot[[i]][,"mz"]))
-        plot(x=msms_plot[[i]][,"rt"], y=msms_plot[[i]][,"mz"],
-             xlim=c(x_min, x_max), ylim=c(y_min, y_max),
-             main=mzml_names[i], xlab="retention time [rt]", ylab="merged m/z [mz]",
-             pch=16, col=rainbow(n=nrow(msms_plot[[i]])))
-    }
+    x_min <- floor(min(msms_plot[,"rt"]))
+    x_max <- ceiling(max(msms_plot[,"rt"]))
+    y_min <- floor(min(msms_plot[,"mz"]))
+    y_max <- ceiling(max(msms_plot[,"mz"]))
+    plot(x=msms_plot[,"rt"], y=msms_plot[,"mz"],
+         xlim=c(x_min, x_max), ylim=c(y_min, y_max),
+         main=mzml_names, xlab="retention time [rt]", ylab="merged m/z [mz]",
+         pch=16, col=rainbow(n=nrow(msms_plot)))
     dev.off()
 }
 
@@ -312,33 +306,31 @@ f.ms2_plot_spectra <- function() {
 
 # ---------- Write out MS/MS spectra in MSP text format ----------
 f.ms2_create_msp <- function() {
-    for (i in 1:length(msms_merged)) {
-        msp_text <- NULL
-        for (j in 1:length(msms_merged[[i]])) {
-            NAME <- paste(mzml_names[i], ":", j, sep='')
-            AlignmentID <- j
-            RETENTIONTIME <- msms_merged[[i]][[j]]@rt
-            PRECURSORMZ <- msms_merged[[i]][[j]]@precursorMz
-            METABOLITENAME <- "Unknown"
-            ADDUCTIONNAME <- "[M+H]+"
-            NumPeaks <- msms_merged[[i]][[j]]@peaksCount
-            Peaks <- NULL
-            for (k in 1:length(msms_merged[[i]][[j]]@mz)) {
-                Peaks <- c(Peaks, paste(msms_merged[[i]][[j]]@mz[k], msms_merged[[i]][[j]]@intensity[k], sep="\t") )
-            }
-            msp_text <- c(msp_text, paste("NAME:",NAME))
-            msp_text <- c(msp_text, paste("AlignmentID:",AlignmentID))
-            msp_text <- c(msp_text, paste("RETENTIONTIME:",RETENTIONTIME))
-            msp_text <- c(msp_text, paste("PRECURSORMZ:",PRECURSORMZ))
-            msp_text <- c(msp_text, paste("METABOLITENAME:",METABOLITENAME))
-            msp_text <- c(msp_text, paste("ADDUCTIONNAME:",ADDUCTIONNAME))
-            msp_text <- c(msp_text, paste("NumPeaks:",NumPeaks))
-            msp_text <- c(msp_text, Peaks)
-            msp_text <- c(msp_text, "")
+    msp_text <- NULL
+    for (j in 1:length(msms_merged)) {
+        NAME <- paste(mzml_names, ":", j, sep='')
+        AlignmentID <- j
+        RETENTIONTIME <- msms_merged[[j]]@rt
+        PRECURSORMZ <- msms_merged[[j]]@precursorMz
+        METABOLITENAME <- "Unknown"
+        ADDUCTIONNAME <- "[M+H]+"
+        NumPeaks <- msms_merged[[j]]@peaksCount
+        Peaks <- NULL
+        for (k in 1:length(msms_merged[[j]]@mz)) {
+            Peaks <- c(Peaks, paste(msms_merged[[j]]@mz[k], msms_merged[[j]]@intensity[k], sep="\t") )
         }
-        cat(msp_text, file=paste(mzml_dir,"/",mzml_names[i],".msp",sep=""), sep="\n")
-        print(paste("Creating ",mzml_dir,"/",mzml_names[i],".msp",sep=""))
+        msp_text <- c(msp_text, paste("NAME:",NAME))
+        msp_text <- c(msp_text, paste("AlignmentID:",AlignmentID))
+        msp_text <- c(msp_text, paste("RETENTIONTIME:",RETENTIONTIME))
+        msp_text <- c(msp_text, paste("PRECURSORMZ:",PRECURSORMZ))
+        msp_text <- c(msp_text, paste("METABOLITENAME:",METABOLITENAME))
+        msp_text <- c(msp_text, paste("ADDUCTIONNAME:",ADDUCTIONNAME))
+        msp_text <- c(msp_text, paste("NumPeaks:",NumPeaks))
+        msp_text <- c(msp_text, Peaks)
+        msp_text <- c(msp_text, "")
     }
+    cat(msp_text, file=paste(mzml_dir,"/",mzml_names,".msp",sep=""), sep="\n")
+    print(paste("Creating ",mzml_dir,"/",mzml_names,".msp",sep=""))
 }
 
 

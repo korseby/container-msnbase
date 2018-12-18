@@ -9,12 +9,14 @@
     <exit_code range="1:" level="fatal" description="Tool error" />
   </stdio>
   <command><![CDATA[
-/usr/local/bin/cpu-slaves-test.r;
+/usr/local/bin/cpu-slaves-test.r > $actualcpu;
   ]]>
   </command>
   <inputs>
+    <param name="desiredcpu" type="text" value="2" optional="False" label="Desired CPU number" help="Desired CPU number" />
   </inputs>
   <outputs>
+    <data name="actualcpu" type="data" format="txt" label="actualcpu.txt" />
   </outputs>
   <help>
 .. class:: infomark
