@@ -193,7 +193,7 @@ metfrag_results_raw <- read.table(file=metfrag_results_file, quote='\"', sep=','
 # Only take the entries with the highest scores
 metfrag_results <- metfrag_results_raw[0, ]
 metfrag_rtmz_unique <- unique(metfrag_results_raw[,c("parentRT","parentMZ")])
-metfrag_rtmz_unique <- metfrag_rtmz_unique[order(metfrag_rtmz_unique$parentRT), ]
+metfrag_rtmz_unique <- metfrag_rtmz_unique[order(metfrag_rtmz_unique$parentMZ), ]
 for (i in 1:nrow(metfrag_rtmz_unique)) {
     temp <- metfrag_results_raw[c(which(metfrag_results_raw$parentRT==metfrag_rtmz_unique[i,"parentRT"] & metfrag_results_raw$parentMZ==metfrag_rtmz_unique[i,"parentMZ"])),]
     temp <- temp[order(temp$Score, decreasing=TRUE),]

@@ -288,7 +288,7 @@ f.ms2_plot_spectra <- function() {
     # For each profile
     msms_plot <- as.data.frame(matrix(unlist(lapply(msms_merged, FUN=function(x) { x <- data.frame(mz=x@precursorMz, rt=x@rt) } )), ncol=2))
     colnames(msms_plot) <- c("mz", "rt")
-    msms_plot <- msms_plot[order(msms_plot$rt), ]
+    msms_plot <- msms_plot[order(msms_plot$mz), ]
     
     pdf(plot_file, encoding="ISOLatin1", pointsize=10, width=5, height=5, family="Helvetica")
     x_min <- floor(min(msms_plot[,"rt"]))
