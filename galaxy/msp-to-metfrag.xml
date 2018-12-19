@@ -75,8 +75,11 @@ echo "FilterIncludedElements: $FilterIncludedElements";
       <option value="PubChem" selected="True">PubChem</option>
       <option value="KEGG">KEGG</option>
       <option value="MetChem" selected="False">MetChem</option>
+<!--
       <option value="LocalCSV" selected="False">CSV</option>
+-->
     </param>
+
     <param name="FilterExcludedElements" type="text" value="Cl,Br,F" optional="False" label="Filter Excluded Elements" help="List of elements that should be excluded. Elements are comma separated without whitespace." />
     <param name="FilterIncludedElements" type="text" value="C,H,N,O,P,S" optional="False" label="Filter Included Elements" help="List of elements that should be included. Elements are comma separated without whitespace." /> 
   </inputs>

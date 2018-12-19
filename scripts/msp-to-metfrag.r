@@ -696,6 +696,9 @@ f.ms2_msp_to_metfrag <- function() {
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "FragmentPeakMatchAbsoluteMassDeviation=", FragmentPeakMatchAbsoluteMassDeviation)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "FragmentPeakMatchRelativeMassDeviation=", FragmentPeakMatchRelativeMassDeviation)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "MetFragDatabaseType=", MetFragDatabaseType)
+        if (MetFragDatabaseType == "MetChem") {
+            metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "LocalMetChemDatabase=metchem LocalMetChemDatabasePortNumber=5432 LocalMetChemDatabaseServerIp=192.168.2.164 LocalMetChemDatabaseUser=metchemro LocalMetChemDatabasePassword=metchemro")
+        }
         if (ScoreSuspectLists) metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "ScoreSuspectLists=", suspect_input_file)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "MetFragScoreTypes=", MetFragScoreTypes)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "MetFragScoreWeights=", MetFragScoreWeights)

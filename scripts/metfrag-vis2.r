@@ -210,9 +210,9 @@ metfrag_sample_name <- gsub("\\..*", "", metfrag_sample_name, ignore.case=TRUE)
 metfrag_sample_name <- gsub("[^0-9A-Za-z///' ]", " ", metfrag_sample_name, ignore.case=TRUE)
 
 # Normalize IUPACName for TeX
-metfrag_results[,"IUPACName"] <- gsub("\\$", "", metfrag_results[,"IUPACName"])
-metfrag_results[,"IUPACName"] <- gsub("^", "\\\\( ", metfrag_results[,"IUPACName"])
-metfrag_results[,"IUPACName"] <- gsub("$", " \\\\)", metfrag_results[,"IUPACName"])
+#metfrag_results[,"IUPACName"] <- gsub("\\$", "", metfrag_results[,"IUPACName"])
+#metfrag_results[,"IUPACName"] <- gsub("^", "\\\\( ", metfrag_results[,"IUPACName"])
+#metfrag_results[,"IUPACName"] <- gsub("$", " \\\\)", metfrag_results[,"IUPACName"])
 
 
 
