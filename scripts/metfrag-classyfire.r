@@ -30,13 +30,43 @@ options(stringAsfactors=FALSE, useFancyQuotes=FALSE)
 args <- commandArgs(trailingOnly=TRUE)
 if (length(args) < 2) {
     print("Error! No or not enough arguments given.")
-    print("Usage: $0 mspfile classyfirefile")
+    print("Usage: $0 metfrag_results.csv classyfire_results.csv")
     quit(save="no", status=1, runLast=FALSE)
 }
 
+# Working directory
+setwd(args[1])
+
 # User variables
-msp_file <- as.character(args[1])
-classyfire_file <- as.numeric(args[2])
+metfrag_results_file <- as.character(args[2])
+metfrag_hits_limit <- as.numeric(1)
+metfrag_synonyms_method <- as.logical(TRUE)
+metfrag_classyfire_method <- as.logical(TRUE)
+
+
+
+# ---------- Fetch synonyms for a SMILES ----------
+f.synonyms_smiles <- function(smiles) {
+    # Check SMILES
+    if ( (is.na(smiles)) || (smiles == "") ) {
+        return(as.character(""))
+    }
+    
+    # Fetch synonyms
+    metfrag_synonyms_url <- paste0("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/", smiles, "/synonyms/JSON")
+    result <- tryCatch(fromJSON(metfrag_synonyms_url), error=function(x) { x } )
+    
+    # No synonyms found
+    if (is.null(result$InformationList)) {
+        return(as.character(""))
+    }
+    
+    # Synonyms
+    metfrag_synonyms <- gsub("[^[:lower:][:upper:][:digit:]/\\-]", "", result$InformationList$Information$Synonym[[1]])
+    if (length(metfrag_synonyms) > 10)
+        metfrag_synonyms <- metfrag_synonyms[c(1:10)]
+    return(paste(metfrag_synonyms, sep="", collapse='; '))
+}
 
 
 
@@ -109,8 +139,58 @@ f.classyfire_inchi <- function(inchi) {
 
 
 
+# ---------- Process MetFrag Table ----------
+# Read MetFrag results file
+metfrag_results_raw <- read.table(file=metfrag_results_file, quote='\"', sep=',', header=TRUE, stringsAsFactors=TRUE, fill=TRUE)
+
+# Only take the entries with the highest scores
+metfrag_results <- metfrag_results_raw[0, ]
+metfrag_rtmz_unique <- unique(metfrag_results_raw[,c("parentRT","parentMZ")])
+metfrag_rtmz_unique <- metfrag_rtmz_unique[order(metfrag_rtmz_unique$parentMZ), ]
+for (i in 1:nrow(metfrag_rtmz_unique)) {
+    temp <- metfrag_results_raw[c(which(metfrag_results_raw$parentRT==metfrag_rtmz_unique[i,"parentRT"] & metfrag_results_raw$parentMZ==metfrag_rtmz_unique[i,"parentMZ"])),]
+    temp <- temp[order(temp$Score, decreasing=TRUE),]
+    temp <- temp[c(1:metfrag_hits_limit),]
+    metfrag_results <- rbind(metfrag_results, temp)
+}
+
+
+
+# ---------- Normalize names ----------
+# Normalize MetFrag sample name
+metfrag_sample_name <- metfrag_results_raw[1,"fileName"]
+metfrag_sample_name <- gsub("\\..*", "", metfrag_sample_name, ignore.case=TRUE)
+metfrag_sample_name <- gsub("[^0-9A-Za-z///' ]", " ", metfrag_sample_name, ignore.case=TRUE)
+
+# Normalize IUPACName for TeX
+#metfrag_results[,"IUPACName"] <- gsub("\\$", "", metfrag_results[,"IUPACName"])
+#metfrag_results[,"IUPACName"] <- gsub("^", "\\\\( ", metfrag_results[,"IUPACName"])
+#metfrag_results[,"IUPACName"] <- gsub("$", " \\\\)", metfrag_results[,"IUPACName"])
+
+
+
+# ---------- Fetch synonyms ----------
+if (metfrag_synonyms_method == TRUE) {
+    metfrag_synonyms <- NULL
+    
+    # Process each InChI
+    print("Fetching synonyms...")
+    for (i in 1:nrow(metfrag_results)) {
+        metfrag_synonyms <- c(metfrag_synonyms, f.synonyms_smiles(metfrag_results[i,"SMILES"]))
+    }
+    
+    # Add column to metfrag_results
+    metfrag_results$Synonyms <- metfrag_synonyms
+} else {
+    metfrag_results$Synonyms <- ""
+}
+
+
+
+
 # ---------- ClassyFire ----------
-# Create empty list
+if (metfrag_classyfire_method == TRUE) {
+    # Create empty list
     metfrag_classyfire <- list()
     
     # Process each InChI
@@ -130,57 +210,7 @@ f.classyfire_inchi <- function(inchi) {
 
 
 
-# ---------- Generate TeX file ----------
-# Process TeX file
-metfrag_tex_file <- "output/metfrag_vis.tex"
-
-# Write Header
-cat(sep='\n', file=metfrag_tex_file, c('% Header',
-'\\documentclass[9pt]{extarticle}',
-'\\usepackage[T1]{fontenc}',
-'\\usepackage[english]{babel}',
-'\\usepackage{lmodern}',
-'\\usepackage{tabularx}',
-'\\usepackage{longtable}',
-'\\usepackage[a4paper,total={170mm,257mm},left=20mm,top=20mm,margin=0.5in]{geometry}',
-'\\usepackage{hyperref}',
-'\\usepackage{graphicx}',
-'\\begin{document}',
-'\\setlength\\parindent{0pt}',
-''))
-
-# Write sample name
-cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('\\begin{center}\\section*{',metfrag_sample_name,'}\\end{center}'),
-                                                    ''))
-
-# Show summary at the beginning
-cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('\\begin{longtable}{ p{0.5cm} | p{1.5cm} | p{1.5cm} | p{3cm} | p{6cm} | p{1cm} }',
-                                                    paste0("No", " & ", "RT", " & ", "MZ", " & ", "Mol. Formula", " & ", "Most abundand class", " & ", "Peaks", " \\\\"),
-                                                    '\\hline'))
-count <- 0
-for (i in 1:nrow(metfrag_rtmz_unique)) {
-    count <- count + 1
-    metfrag_results_entries <- metfrag_results[c(which(metfrag_results$parentRT==metfrag_rtmz_unique[i,"parentRT"] & metfrag_results$parentMZ==metfrag_rtmz_unique[i,"parentMZ"])),]
-    
-    rt <- metfrag_results_entries$parentRT[1]
-    mz <- metfrag_results_entries$parentMZ[1]
-    molecular_formula <- metfrag_results_entries$MolecularFormula[1]
-    most_abundant_class <- metfrag_results_entries$ClassyFireDirect
-    most_abundant_class <- metfrag_results_entries$ClassyFireDirect[sort(table(most_abundant_class))[1]]
-    mean_explained_peaks <- round(mean(metfrag_results_entries$NoExplPeaks, na.rm=TRUE), digits=0)
-    number_peaks <- metfrag_results_entries$NumberPeaksUsed
-    number_peaks <- metfrag_results_entries$NumberPeaksUsed[sort(table(number_peaks))[1]]
-    
-    cat(sep='\n', file=metfrag_tex_file, append=TRUE, paste0(count, " & ", rt, " & ", mz, " & ", molecular_formula, " & ", most_abundant_class, " & ", paste0(mean_explained_peaks,"/",number_peaks), " \\\\"))
-}
-
-cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('\\hline',
-                                                    '\\end{longtable}',
-                                                    '\\ \\\\',
-                                                    '\\ \\\\'))
-
-# Process MetFrag entries
-print("Creating MetFrag TeX file...")
+# ---------- Save results as CSV ----------
 for (i in 1:nrow(metfrag_rtmz_unique)) {
     # Write entries for RT, MZ pairs
     metfrag_rtmz_unique[i,]
