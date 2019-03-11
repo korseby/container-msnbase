@@ -28,17 +28,16 @@ options(stringAsfactors=FALSE, useFancyQuotes=FALSE)
 # ---------- Arguments and user variables ----------
 # Take in trailing command line arguments
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) < 2) {
+if (length(args) < 3) {
     print("Error! No or not enough arguments given.")
-    print("Usage: $0 metfrag_results.csv classyfire_results.csv")
+    print("Usage: $0 metfrag_results.csv classyfire_results.csv classyfire_overview.pdf")
     quit(save="no", status=1, runLast=FALSE)
 }
 
-# Working directory
-setwd(args[1])
-
 # User variables
-metfrag_results_file <- as.character(args[2])
+metfrag_results_file <- as.character(args[1])
+metfrag_output_file <- as.character(args[2])
+metfrag_plot_file <- as.character(args[3])
 metfrag_hits_limit <- as.numeric(1)
 metfrag_synonyms_method <- as.logical(TRUE)
 metfrag_classyfire_method <- as.logical(TRUE)
@@ -211,75 +210,32 @@ if (metfrag_classyfire_method == TRUE) {
 
 
 # ---------- Save results as CSV ----------
-for (i in 1:nrow(metfrag_rtmz_unique)) {
-    # Write entries for RT, MZ pairs
-    metfrag_rtmz_unique[i,]
-    metfrag_results_entries <- metfrag_results[c(which(metfrag_results$parentRT==metfrag_rtmz_unique[i,"parentRT"] & metfrag_results$parentMZ==metfrag_rtmz_unique[i,"parentMZ"])),]
-
-    # Sort for RT, MZ entries
-    cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('\\noindent\\rule{\\textwidth}{0.4pt}',
-                                                        paste0('\\subsection*{\\textbf{RT:} ',metfrag_results_entries[1,"parentRT"], ', \\textbf{MZ:} ', metfrag_results_entries[1,"parentMZ"], '}'),
-                                                        '\\ \\\\',
-                                                        '\\ \\\\',
-                                                        ''))
-
-    # Process each entry
-    for (j in c(1:nrow(metfrag_results_entries))) {
-        # Entry header
-        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('% Entry: ',j),
-                                                            '\\begin{minipage}{1\\textwidth}',
-                                                            '    \\begin{minipage}{0.15\\textwidth}'))
-        
-        # Include structures
-        if (nchar(metfrag_results_entries[j,"StructurePDF"]) > 2) {
-            cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('        \\includegraphics[width=4cm]{', metfrag_results_entries[j,"StructurePDF"], '}')))
-        } else if (nchar(metfrag_results_entries[j,"StructurePDF"]) < 2) {
-            cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('        \\textbf{no structure available}'))
-        } else if (file.info(metfrag_results_entries[j,"StructurePDF"])$size <= 2 ) {
-            cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('        \\textbf{no structure available}'))
-        } else {
-            cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('        \\textbf{no structure available}'))
-        }
-        
-        # Entry fill
-        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('    \\end{minipage} \\hfill',
-                                                            '    \\begin{minipage}{0.8\\textwidth}',
-                                                            '        \\begin{itemize}'))
-        
-        # MetFrag items
-        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c(paste0('			\\item[] \\textbf{Identifier:} ',metfrag_results_entries[j,"Identifier"]),
-                                                            paste0('			\\item[] \\textbf{Synonyms:} ',metfrag_results_entries[j,"Synonyms"]),
-                                                            paste0('			\\item[] \\textbf{Molecular Formula:} ',metfrag_results_entries[j,"MolecularFormula"]),
-                                                            paste0('			\\item[] \\textbf{Primary compound class:} ', metfrag_results_entries[j,"ClassyFireDirect"]),
-                                                            paste0('			\\item[] \\textbf{Alternative compound classes:} ', metfrag_results_entries[j,"ClassyFireAlternatives"]),
-                                                            paste0('			\\item[] \\textbf{MetFusion Score:} ',metfrag_results_entries[j,"OfflineMetFusionScore"]),
-                                                            paste0('			\\item[] \\textbf{Peaks explained:} ',metfrag_results_entries[j,"NoExplPeaks"], '/', metfrag_results_entries[j,"NumberPeaksUsed"]) ))
-        
-        # Entry footer
-        cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('        \\end{itemize}',
-                                                            '    \\end{minipage}\\\\[0.4cm]',
-                                                            '\\end{minipage}\\\\[0.8cm]',
-                                                            ''))
-    }
-}
-
-# TeX footer
-cat(sep='\n', file=metfrag_tex_file, append=TRUE, c('% Footer',
-                                                    '\\end{document}'))
+# Write MetFrag results file
+write.csv(x=metfrag_results, file=metfrag_output_file, quote=TRUE, row.names=FALSE, na="\"\"")
 
 
 
-# ---------- Generate PDF file ----------
-#setwd(paste0(args[1],"/output"))
-#suppressWarnings(
-#    result <- system2(command="pdflatex", args="metfrag_vis.tex", stdout=TRUE, stderr=TRUE, #wait=TRUE, timeout=120)
-#)
-#if (! is.null(attr(x=result, which="status"))) {
-#    cat(result, sep='\n')
-#    print("Error generating PDF file.")
-#    quit(status="400")
-#}
-#setwd(args[1])
+# ---------- Statistics on classes ----------
+# Check whether there are known compounds
+print(paste(length(which(metfrag_results$Synonyms != "")), "identified compounds."))
+
+# Determine most abundant primary classes
+primary_classes <- data.frame(classes=as.character(unique(metfrag_results[(metfrag_results$ClassyFireDirect != "NULL"), "ClassyFireDirect"])), frequency=0)
+for (i in 1:length(primary_classes$classes)) primary_classes[i,"frequency"] <- length(which(metfrag_results$ClassyFireDirect == primary_classes[i,"classes"]))
+primary_classes <- primary_classes[order(primary_classes$frequency, decreasing=TRUE),]
+
+# Determine most abundant subordinate classes
+temp <- data.frame(classes=unlist(strsplit(x=paste(metfrag_results$ClassyFireAlternatives, collapse="; "), split="; ")), frequency=0)
+temp <- temp[-which(temp$classes == ""),]
+secondary_classes <- data.frame(classes=unique(temp$classes), frequency=0)
+for (i in 1:length(secondary_classes$classes)) secondary_classes[i,"frequency"] <- length(which(temp$classes == secondary_classes[i,"classes"]))
+secondary_classes <- secondary_classes[order(secondary_classes$frequency, decreasing=TRUE),]
+
+pdf(file=metfrag_plot_file, encoding="ISOLatin1", pointsize=10, width=20, height=10, family="Helvetica")
+par(mfrow=c(1,1), mar=c(14,4,4,1), oma=c(0,0,0,0), cex.axis=0.8, cex=0.9)
+barplot(primary_classes[1:20,"frequency"], names.arg=primary_classes[1:20,"classes"], las=3, main="Most abundand primary classes")
+barplot(secondary_classes[1:40,"frequency"], names.arg=secondary_classes[1:40,"classes"], las=3, main="Most abundand subordinate classes")
+dev.off()
 
 
 
