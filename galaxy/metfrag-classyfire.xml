@@ -17,7 +17,7 @@
   </inputs>
   <outputs>
     <data name="classyfire_output" type="data" format="csv" label="CSV with Classified spectra" />
-    <data name="classyfire_output" type="data" format="pdf" label="PDF plot with overview on classified spectra" />
+    <data name="classyfire_plot" type="data" format="pdf" label="PDF plot with overview on classified spectra" />
   </outputs>
   <help>
 
