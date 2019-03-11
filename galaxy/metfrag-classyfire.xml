@@ -14,6 +14,7 @@
   </command>
   <inputs>
     <param name="metfrag_input" type="data" format="csv" multiple="False" optional="False" label="MetFrag result file(s)" />
+  </inputs>
   <outputs>
     <data name="classyfire_output" type="data" format="csv" label="CSV with Classified spectra" />
     <data name="classyfire_output" type="data" format="pdf" label="PDF plot with overview on classified spectra" />
