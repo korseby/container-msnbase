@@ -226,7 +226,7 @@ primary_classes <- primary_classes[order(primary_classes$frequency, decreasing=T
 
 # Determine most abundant subordinate classes
 temp <- data.frame(classes=unlist(strsplit(x=paste(metfrag_results$ClassyFireAlternatives, collapse="; "), split="; ")), frequency=0)
-temp <- temp[-which(temp$classes == ""),]
+if ( length(which(temp$classes == "")) > 0) temp <- temp[-which(temp$classes == ""),]
 secondary_classes <- data.frame(classes=unique(temp$classes), frequency=0)
 for (i in 1:length(secondary_classes$classes)) secondary_classes[i,"frequency"] <- length(which(temp$classes == secondary_classes[i,"classes"]))
 secondary_classes <- secondary_classes[order(secondary_classes$frequency, decreasing=TRUE),]
