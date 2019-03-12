@@ -220,7 +220,11 @@ write.csv(x=metfrag_results, file=metfrag_output_file, quote=TRUE, row.names=FAL
 print(paste(length(which(metfrag_results$Synonyms != "")), "identified compounds."))
 
 # Determine most abundant primary classes
-primary_classes <- data.frame(classes=as.character(unique(metfrag_results[(metfrag_results$ClassyFireDirect != "NULL"), "ClassyFireDirect"])), frequency=0)
+if ( length(which(metfrag_results$ClassyFireDirect =="NULL")) > 0) {
+    primary_classes <- data.frame(classes=as.character(unique(metfrag_results[(metfrag_results$ClassyFireDirect != "NULL"), "ClassyFireDirect"])), frequency=0)
+} else {
+    primary_classes <- data.frame(classes=as.character(unique(metfrag_results[, "ClassyFireDirect"])), frequency=0)
+}
 for (i in 1:length(primary_classes$classes)) primary_classes[i,"frequency"] <- length(which(metfrag_results$ClassyFireDirect == primary_classes[i,"classes"]))
 primary_classes <- primary_classes[order(primary_classes$frequency, decreasing=TRUE),]
 
