@@ -26,7 +26,8 @@ echo "MetFragScoreWeights: ${suspectlist.MetFragScoreWeights}";
 echo "MetFragDatabaseType: $MetFragDatabaseType";
 echo "FilterExcludedElements: $FilterExcludedElements";
 echo "FilterIncludedElements: $FilterIncludedElements";
-/usr/local/bin/msp-to-metfrag.r $mspfile ${suspectlist.suspectfile} $metfragparameterfile $minintthr $minprop $pretofrag $fragtofrag $polarity $PrecursorIonType $DatabaseSearchRelativeMassDeviation $FragmentPeakMatchAbsoluteMassDeviation $FragmentPeakMatchRelativeMassDeviation ${suspectlist.MetFragScoreTypes} ${suspectlist.MetFragScoreWeights} $MetFragDatabaseType $FilterExcludedElements $FilterIncludedElements;
+echo "NumberThreads: $NumberThreads";
+/usr/local/bin/msp-to-metfrag.r $mspfile ${suspectlist.suspectfile} $metfragparameterfile $minintthr $minprop $pretofrag $fragtofrag $polarity $PrecursorIonType $DatabaseSearchRelativeMassDeviation $FragmentPeakMatchAbsoluteMassDeviation $FragmentPeakMatchRelativeMassDeviation ${suspectlist.MetFragScoreTypes} ${suspectlist.MetFragScoreWeights} $MetFragDatabaseType $FilterExcludedElements $FilterIncludedElements $NumberThreads;
   ]]>
   </command>
   <inputs>
@@ -81,7 +82,9 @@ echo "FilterIncludedElements: $FilterIncludedElements";
     </param>
 
     <param name="FilterExcludedElements" type="text" value="Cl,Br,F" optional="False" label="Filter Excluded Elements" help="List of elements that should be excluded. Elements are comma separated without whitespace." />
-    <param name="FilterIncludedElements" type="text" value="C,H,N,O,P,S" optional="False" label="Filter Included Elements" help="List of elements that should be included. Elements are comma separated without whitespace." /> 
+    <param name="FilterIncludedElements" type="text" value="C,H,N,O,P,S" optional="False" label="Filter Included Elements" help="List of elements that should be included. Elements are comma separated without whitespace." />
+
+    <param name="NumberThreads" type="text" value="4" optional="False" label="Number of threads" help="Number of threads that are used in parallel processing" />
   </inputs>
   <outputs>
     <data name="metfragparameterfile" type="data" format="txt" label="${mspfile.display_name}_parameter.txt" />
