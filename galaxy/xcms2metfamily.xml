@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<tool id="xcms2metfamily" name="xcms2metfamily" version="0.1">
+  <requirements>
+    <container type="docker">korseby/mtbls709</container>
+  </requirements>
+  <description>Convert XCMS data matrices to MetFamily (MS-Dial) format</description>
+  <stdio>
+    <regex match="" source="stderr" level="warning" description="R messages" />
+    <exit_code range="1:" level="fatal" description="Tool error" />
+  </stdio>
+  <command>
+<![CDATA[
+xcms2metfamily.r $dataMatrix $sampleMetadata $variableMetadata $fileMSDialFormat;
+]]>
+  </command>
+  <inputs>
+    <param name="dataMatrix" type="data" format="tsv" multiple="False" optional="False" label="XCMS data matrix" />
+    <param name="sampleMetadata" type="data" format="tsv" multiple="False" optional="False" label="XCMS sample metadata" />
+    <param name="variableMetadata" type="data" format="tsv" multiple="False" optional="False" label="XCMS variable metadata" />
+  </inputs>
+  <outputs>
+    <data name="fileMSDialFormat" type="data" format="csv" label="Data matrix for MetFamily" />	
+  </outputs>
+  <help>
+
+.. class:: infomark
+
+| **Tool update: See the 'NEWS' section at the bottom of the page**
+
+---------------------------------------------------
+
+.. class:: infomark
+
+**Authors**
+
+| **Cindy Robbrecht (Cindy.Robbrecht@web.de)** wrote the R script and **Kristian Peters (kpeters@ipb-halle.de)** maintains the Galaxy wrapper.
+
+---------------------------------------------------
+
+================
+MetFamily Import
+================
+
+-----------
+Description
+-----------
+
+| This module is used to convert XCMS data tables to be used with MetFamily. The resulting data file is very similar to the table exported by the MS-Dial software.
+
++-------------------+
+| predecessor tool  |
++-------------------+
+| xcms-w4m          |
++-------------------+
+
+-----------
+Input files
+-----------
+
++------------------------------+--------+
+| File                         | Format |
++==============================+========+
+| 1) XCMS dataMatrix           |  TSV   |
+| 2) XCMS sampleMetadata       |  TSV   |
+| 3) XCMS variableMetadata     |  TSV   |
++------------------------------+--------+
+
+----------
+Parameters
+----------
+
+
+------------
+Output files
+------------
+
++------------------------------------+--------+
+| Files                              | Format |
++====================================+========+
+| 1) fileMSDialFormat for MetFamily  |  CSV   |
++------------------------------------+--------+
+
+---------------------------------------------------
+
+-------
+Changes
+-------
+
+Version: 0.1
+
+
+  </help>
+</tool>
