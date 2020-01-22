@@ -19,6 +19,7 @@
     #if $additional_metfrag_scores != "None"
         -s "$additional_metfrag_scores"
     #end if
+    ;
   ]]>
   </command>
   <inputs>
