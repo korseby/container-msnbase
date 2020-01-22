@@ -715,7 +715,7 @@ f.ms2_msp_to_metfrag <- function() {
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "MetFragPreProcessingCandidateFilter=", MetFragPreProcessingCandidateFilter)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "PeakListString=", PeakListString)
         metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "SampleName=", SampleName)
-        metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "NumberThreads=", NumberThreads)
+        #metfrag_parameter_line <- paste0(metfrag_parameter_line, " ", "NumberThreads=", NumberThreads)
         
         metfrag_parameter_file <- c(metfrag_parameter_file, metfrag_parameter_line)
     }
