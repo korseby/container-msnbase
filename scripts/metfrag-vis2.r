@@ -191,6 +191,8 @@ f.classyfire_inchi <- function(inchi) {
 metfrag_results_raw <- read.table(file=metfrag_results_file, quote='\"', sep=',', header=TRUE, stringsAsFactors=TRUE, fill=TRUE)
 
 # Only take the entries with the highest scores
+if (("parentRT" %in% colnames(metfrag_results_raw)) == FALSE) metfrag_results_raw$parentRT=0
+if (("parentMZ" %in% colnames(metfrag_results_raw)) == FALSE) metfrag_results_raw$parentMZ=0
 metfrag_results <- metfrag_results_raw[0, ]
 metfrag_rtmz_unique <- unique(metfrag_results_raw[,c("parentRT","parentMZ")])
 metfrag_rtmz_unique <- metfrag_rtmz_unique[order(metfrag_rtmz_unique$parentMZ), ]
