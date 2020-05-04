@@ -1,5 +1,5 @@
 # MSnbase
-Version: 2.0.2
+Version: 2.2
 
 ## Short Description
 Basic plotting, data manipulation and processing of MS-based Proteomics data.
@@ -44,6 +44,7 @@ Sebastian Gibb
 ## Container Contributors
 
 - [Kristian Peters](https://github.com/korseby) (IPB-Halle)
+- Rene Meier
 - Christoph Ruttkies
 - Payam Emami
 
