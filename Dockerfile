@@ -46,6 +46,9 @@ RUN git clone https://github.com/korseby/container-msnbase && cd container-msnba
 # Install cdk-inchi-to-svg
 RUN git clone https://github.com/korseby/container-msnbase && cd container-msnbase && cd cdk-inchi-to-svg && mvn package && for i in $(find . -name "*with-dependencies*jar"); do install -m755 "$i" /usr/local/bin/cdk-inchi-to-svg.jar; done
 
+# Install MetFrag logo
+ADD metfrag_logo.png /usr/local/share/metfrag/metfrag_logo.png
+
 # Cleanup
 RUN apt-get -y --purge --auto-remove remove make gcc gfortran g++
 RUN apt-get -y clean && apt-get -y autoremove && rm -rf /var/lib/{cache,log}/ /tmp/* /var/tmp/*
