@@ -12,7 +12,7 @@ import net.sf.jniinchi.INCHI_RET;
  * Hello world!
  *
  */
-public class InChitoSVG {
+public class App {
 	public static void main(String[] args) throws IOException, CDKException {
 		if (args.length == 2) {
 			String inchi = args[0];
