@@ -15,7 +15,7 @@ RUN locale-gen $LC_ALL
 RUN dpkg-reconfigure locales
 
 # Install packages
-RUN apt-get -y update && apt-get -y dist-upgrade && apt-get -y --allow-unauthenticated install apt-transport-https make gcc gfortran g++ libblas-dev liblapack-dev libxml++2.6-dev libexpat1-dev libxml2-dev libnetcdf-dev libssl-dev r-base r-base-dev maven texlive-latex-base texlive-latex-recommended texlive-fonts-recommended git openjdk-8-jdk-headless openjdk-8-jre-headless pkg-config parallel wget curl git unzip zip python3
+RUN apt-get -y update && apt-get -y dist-upgrade && apt-get -y --allow-unauthenticated install apt-transport-https make gcc gfortran g++ libblas-dev liblapack-dev libxml++2.6-dev libexpat1-dev libxml2-dev libnetcdf-dev libssl-dev r-base r-base-dev maven texlive-latex-base texlive-latex-recommended texlive-fonts-recommended git openjdk-8-jdk-headless openjdk-8-jre-headless pkg-config parallel wget curl git unzip zip python3 python3-matplotlib-dbg python3-numpy-dbg python-pip
 
 # Install R packages
 RUN R -e 'install.packages(c("irlba","igraph","ggplot2","digest","lattice","XML","Rcpp","reshape2","plyr","stringi","stringr","intervals","devtools","RColorBrewer","plyr","RANN","knitr","ncdf4","microbenchmark","RUnit","foreach","doMC","curl","jsonlite"), repos="https://cloud.r-project.org/")'
@@ -48,6 +48,12 @@ RUN git clone https://github.com/korseby/container-msnbase && cd container-msnba
 
 # Install MetFrag logo
 ADD metfrag_logo.png /usr/local/share/metfrag/metfrag_logo.png
+
+# Upgrade pip
+RUN pip install --upgrade pip
+RUN pip install --upgrade pubchempy
+RUN pip install --upgrade matplotlib
+RUN pip install --upgrade numpy
 
 # Cleanup
 RUN apt-get -y --purge --auto-remove remove make gcc gfortran g++
