@@ -193,7 +193,13 @@ def fetch_classyfire_classes(inchi):
 
 
 # ---------- Plot Spectrum ----------
-def plot_spectrum(spectrum):
+def plot_spectrum(spectrum, spectrum_explained, spectrum_explained_formulas):
+	# Plot
+	plt.figure(figsize=[5.5, 4.4])
+	plt.xlabel('m/z')
+	plt.ylabel('intensity')
+	
+	# Plot spectrum
 	x = []
 	y = []
 	for i in spectrum.split(';'):
@@ -201,13 +207,36 @@ def plot_spectrum(spectrum):
 		x.append(t[0])
 		y.append(t[1])
 	
-	# Plot
-	plt.figure(figsize=[5.5, 4.4])
-	plt.xlabel('m/z')
-	plt.ylabel('intensity')
 	for i in range(0, len(x)):
 		plt.plot([float(x[i]), float(x[i])], [0, float(y[i])], linewidth=1, color='black')
 		plt.plot(float(x[i]), float(y[i]), 'o', color='black', markersize=4)
+	
+	# Plot explained peaks
+	ex = []
+	ey = []
+	for i in spectrum_explained.split(';'):
+		t = i.split('_')
+		ex.append(t[0])
+		ey.append(y[x.index(t[0])])
+	
+	for i in range(0, len(ex)):
+		plt.plot([float(ex[i]), float(ex[i])], [0, float(ey[i])], linewidth=3, color='#2b8126')
+		plt.plot(float(ex[i]), float(ey[i]), 'o', color='#2b8126', markersize=8)
+	
+	# Plot formulas on explained peaks
+	ex = []
+	ey = []
+	ez = []
+	for i in spectrum_explained_formulas.split(';'):
+		t = i.split(':')
+		ex.append(t[0])
+		ey.append(y[x.index(t[0])])
+		ez.append(t[1])
+	
+	for i in range(0, len(ex)):
+		plt.text(float(ex[i]), float(ey[i])+1000, ez[i], color='#2b8126', fontsize=8, horizontalalignment='center', verticalalignment='bottom')
+	
+	# Save SVG
 	plt.savefig("metfrag-vis-spectrum.svg", format="svg", transparent=True)
 	plt.close()
 	
@@ -221,12 +250,6 @@ def plot_spectrum(spectrum):
 	os.remove("metfrag-vis-spectrum.svg")
 	return(str(''.join(svg_string)))
 
-
-
-###################################
-#fetch_pubchem_synonyms('InChI=1S/C16H12O5/c1-20-10-4-2-9(3-5-10)12-8-21-15-7-14(18)13(17)6-11(15)16(12)19/h2-8,17-18H,1H3')
-#plot_spectrum('53.2165603637695_219.481;53.3158149719238_284.551;55.7277946472168_244.585;64.7406311035156_296.845;66.0105819702148_225.854;69.0340881347656_330.545;71.0497360229492_442.252;81.0703277587891_393.583;81.4976196289063_256.534;83.0187454223633_239.861;83.0499572753906_276.751;85.5481033325195_283.49;95.0608062744141_412.494;96.0448837280273_347.668;98.9558639526367_267.38;99.0445251464844_355.12;105.037155151367_350.245;106.065567016602_1574.46;107.085815429688_429.784;114.055229187012_278.093;115.970359802246_576.834;116.966445922852_7650.72;121.064910888672_410.362;121.282569885254_289.057;122.06031036377_519.497;123.055503845215_496.034;123.080574035645_499.457;123.613143920898_274.519;124.03955078125_1785.58;125.082336425781_645.283;126.05509185791_1287.69;126.066505432129_462.345;126.950752258301_421.05;127.039070129395_663.837;139.982269287109_4699.58;143.964828491211_549.833;144.961380004883_4977.29;150.018600463867_1812.68;150.054885864258_1293.75;150.091430664063_15045.9;151.050445556641_448.881;151.07536315918_1766.08;164.736663818359_269.058;167.081451416016_335.95;167.106674194336_346.1;167.977111816406_10771.9;168.029708862305_357.348;168.063201904297_47031.1;168.076995849609_1650.11;168.095748901367_752.719;168.101943969727_6948.9;168.138305664063_688.625;168.977020263672_343.987;169.035827636719_4622.69;169.066650390625_447.521;169.075057983398_325.226;169.08561706543_425.256;169.157806396484_269.349;176.979476928711_297.058')
-#exit(0)
 
 
 # #################### MAIN ####################
@@ -293,13 +316,16 @@ with open(input_tsv, "r") as metfrag_file:
 				candidates = 0
 				identifier = row["name"]
 				monoisotopic_mass = row["MonoisotopicMass"]
+				retention_time = row["retention_time"]
+				precursor_type = row["precursor_type"]
 				
 				if (line_count > 1):
 					metfrag_html.write(str('</table>\n'))
 				
 				metfrag_html.write(str('\n' + '<h2>' + identifier + '</h2>\n'))
-				metfrag_html.write(str('<p><b>Monoisotopic Mass:</b> ' + str(round(float(monoisotopic_mass), 4)) + '<br>'))
-				metfrag_html.write(str('<b>Retention Time:</b> ' + str(round(float(0.0000), 4)) + '<br></p>'))
+				metfrag_html.write(str('<p><b>Precursor Type:</b> ' + str(precursor_type) + '<br>'))
+				metfrag_html.write(str('<b>Precursor Monoisotopic Mass:</b> ' + str(round(float(monoisotopic_mass), 4)) + '<br>'))
+				metfrag_html.write(str('<b>Precursor Retention Time:</b> ' + str(round(float(retention_time), 4)) + '<br></p>'))
 				metfrag_html.write(str('\n' + '<table>\n'))
 				metfrag_html.write(str('<tr style="vertical-align:bottom; background-color:#e3efdf;">'
 				                              + '<td class="tdmax">' + '<b>Spectrum</b>' + '</td>'
@@ -331,6 +357,10 @@ with open(input_tsv, "r") as metfrag_file:
 				suspectlist_score = row["SuspectListScore"]
 				peaks_explained = row["NoExplPeaks"]
 				peaks_used = row["NumberPeaksUsed"]
+				spectrum = row["PeakListString"]
+				spectrum_explained = row["ExplPeaks"]
+				spectrum_explained_formulas = row["FormulasOfExplPeaks"]
+				identifier = row["Identifier"]
 				
 				# PubChem Synonyms
 				if (pubchem_synonyms_enabled == True):
@@ -345,8 +375,7 @@ with open(input_tsv, "r") as metfrag_file:
 					compound_classes = '&nbsp;'
 				
 				# Draw Spectrum
-				spectrum = '53.2165603637695_219.481;53.3158149719238_284.551;55.7277946472168_244.585;64.7406311035156_296.845;66.0105819702148_225.854;69.0340881347656_330.545;71.0497360229492_442.252;81.0703277587891_393.583;81.4976196289063_256.534;83.0187454223633_239.861;83.0499572753906_276.751;85.5481033325195_283.49;95.0608062744141_412.494;96.0448837280273_347.668;98.9558639526367_267.38;99.0445251464844_355.12;105.037155151367_350.245;106.065567016602_1574.46;107.085815429688_429.784;114.055229187012_278.093;115.970359802246_576.834;116.966445922852_7650.72;121.064910888672_410.362;121.282569885254_289.057;122.06031036377_519.497;123.055503845215_496.034;123.080574035645_499.457;123.613143920898_274.519;124.03955078125_1785.58;125.082336425781_645.283;126.05509185791_1287.69;126.066505432129_462.345;126.950752258301_421.05;127.039070129395_663.837;139.982269287109_4699.58;143.964828491211_549.833;144.961380004883_4977.29;150.018600463867_1812.68;150.054885864258_1293.75;150.091430664063_15045.9;151.050445556641_448.881;151.07536315918_1766.08;164.736663818359_269.058;167.081451416016_335.95;167.106674194336_346.1;167.977111816406_10771.9;168.029708862305_357.348;168.063201904297_47031.1;168.076995849609_1650.11;168.095748901367_752.719;168.101943969727_6948.9;168.138305664063_688.625;168.977020263672_343.987;169.035827636719_4622.69;169.066650390625_447.521;169.075057983398_325.226;169.08561706543_425.256;169.157806396484_269.349;176.979476928711_297.058'
-				spectrum_string = plot_spectrum(spectrum)
+				spectrum_string = plot_spectrum(spectrum, spectrum_explained, spectrum_explained_formulas)
 				
 				# Draw SVG
 				svg_string = cdk_inchi_to_svg(str(inchi))
