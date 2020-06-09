@@ -172,14 +172,14 @@ def fetch_classyfire_classes(inchi):
 		# Direct parent
 		direct_parent_name = classyfire_query.json()['entities'][0]['direct_parent']['name']
 		direct_parent_url = classyfire_query.json()['entities'][0]['direct_parent']['url']
-		direct_parent = str('<a href="' + direct_parent_url + '">' + direct_parent_name + '</a>')
+		direct_parent = str('<a target="_blank" href="' + direct_parent_url + '">' + direct_parent_name + '</a>')
 		
 		# Alternative parents
 		alt_parents = []
 		for i in range(0, len(classyfire_query.json()['entities'][0]['alternative_parents'])):
 			alt_parent_name = classyfire_query.json()['entities'][0]['alternative_parents'][i]['name']
 			alt_parent_url = classyfire_query.json()['entities'][0]['alternative_parents'][i]['url']
-			alt_parent = str('<a href="' + alt_parent_url + '">' + alt_parent_name + '</a>')
+			alt_parent = str('<a target="_blank" href="' + alt_parent_url + '">' + alt_parent_name + '</a>')
 			alt_parents.append(alt_parent)
 		
 		# Concat classes
@@ -211,30 +211,31 @@ def plot_spectrum(spectrum, spectrum_explained, spectrum_explained_formulas):
 		plt.plot([float(x[i]), float(x[i])], [0, float(y[i])], linewidth=1, color='black')
 		plt.plot(float(x[i]), float(y[i]), 'o', color='black', markersize=4)
 	
-	# Plot explained peaks
-	ex = []
-	ey = []
-	for i in spectrum_explained.split(';'):
-		t = i.split('_')
-		ex.append(t[0])
-		ey.append(y[x.index(t[0])])
-	
-	for i in range(0, len(ex)):
-		plt.plot([float(ex[i]), float(ex[i])], [0, float(ey[i])], linewidth=3, color='#2b8126')
-		plt.plot(float(ex[i]), float(ey[i]), 'o', color='#2b8126', markersize=8)
-	
-	# Plot formulas on explained peaks
-	ex = []
-	ey = []
-	ez = []
-	for i in spectrum_explained_formulas.split(';'):
-		t = i.split(':')
-		ex.append(t[0])
-		ey.append(y[x.index(t[0])])
-		ez.append(t[1])
-	
-	for i in range(0, len(ex)):
-		plt.text(float(ex[i]), float(ey[i])+1000, ez[i], color='#2b8126', fontsize=8, horizontalalignment='center', verticalalignment='bottom')
+	if not (spectrum_explained == 'NA') and not (spectrum_explained_formulas == 'NA'):
+		# Plot explained peaks
+		ex = []
+		ey = []
+		for i in spectrum_explained.split(';'):
+			t = i.split('_')
+			ex.append(t[0])
+			ey.append(y[x.index(t[0])])
+		
+		for i in range(0, len(ex)):
+			plt.plot([float(ex[i]), float(ex[i])], [0, float(ey[i])], linewidth=3, color='#2b8126')
+			plt.plot(float(ex[i]), float(ey[i]), 'o', color='#2b8126', markersize=8)
+		
+		# Plot formulas on explained peaks
+		ex = []
+		ey = []
+		ez = []
+		for i in spectrum_explained_formulas.split(';'):
+			t = i.split(':')
+			ex.append(t[0])
+			ey.append(y[x.index(t[0])])
+			ez.append(t[1])
+		
+		for i in range(0, len(ex)):
+			plt.text(float(ex[i]), float(ey[i])+1000, ez[i], color='#2b8126', fontsize=8, horizontalalignment='center', verticalalignment='bottom')
 	
 	# Save SVG
 	plt.savefig("metfrag-vis-spectrum.svg", format="svg", transparent=True)
@@ -301,22 +302,26 @@ with open(input_tsv, "r") as metfrag_file:
 			with open("/usr/local/share/metfrag/metfrag_logo.png", "rb") as png_file:
 				png_encoded = base64.b64encode(png_file.read())
 			metfrag_html.write(str('\n<h1><img style="vertical-align:bottom" src="data:image/png;base64,' + png_encoded.decode('utf-8') + '" alt="metfrag-logo" width="150"></img><text style="line-height:2.0">&nbsp;&nbsp;results</text></h1>\n'))
-			metfrag_html.write('\n<h2>Parameter list</h2>\n')
-			metfrag_html.write('DatabaseSearchRelativeMassDeviation=10<br>\n')
-			metfrag_html.write('FragmentPeakMatchAbsoluteMassDeviation=0.001<br>\n')
-			metfrag_html.write('FragmentPeakMatchRelativeMassDeviation=10<br>\n')
-			metfrag_html.write('MetFragDatabaseType=PubChem<br>\n')
-			metfrag_html.write('PrecursorIonType=[M+H]+<br>\n')
-			metfrag_html.write('FilterExcludedElements=Cl,Br,F<br>\n')
-			metfrag_html.write('FilterIncludedElements=C,H,N,O,P,S<br>\n')
 		else:
+			# Parameter list at beginning of document
+			if (line_count == 1):
+				metfrag_html.write('\n<h2>Parameter list</h2>\n')
+				metfrag_html.write(str('MetFragDatabaseType=' + re.sub(' .*', '', re.sub('.*MetFragDatabaseType=', '', row["MetFragCLIString"])) + '<br>\n'))
+				metfrag_html.write(str('PrecursorIonMode=' + re.sub(' .*', '', re.sub('.*PrecursorIonMode=', '', row["MetFragCLIString"])) + '<br>\n'))
+				metfrag_html.write(str('DatabaseSearchRelativeMassDeviation=' + re.sub(' .*', '', re.sub('.*DatabaseSearchRelativeMassDeviation=', '', row["MetFragCLIString"])) + '<br>\n'))
+				metfrag_html.write(str('FragmentPeakMatchAbsoluteMassDeviation=' + re.sub(' .*', '', re.sub('.*FragmentPeakMatchAbsoluteMassDeviation=', '', row["MetFragCLIString"])) + '<br>\n'))
+				metfrag_html.write(str('FragmentPeakMatchRelativeMassDeviation=' + re.sub(' .*', '', re.sub('.*FragmentPeakMatchRelativeMassDeviation=', '', row["MetFragCLIString"])) + '<br>\n'))
+				metfrag_html.write(str('FilterExcludedElements=' + re.sub(' .*', '', re.sub('.*FilterExcludedElements=', '', row["MetFragCLIString"])) + '<br>\n'))
+				metfrag_html.write(str('FilterIncludedElements=' + re.sub(' .*', '', re.sub('.*FilterIncludedElements=', '', row["MetFragCLIString"])) + '<br>\n'))
+				metfrag_html.write(str('MetFragScoreTypes=' + re.sub(' .*', '', re.sub('.*MetFragScoreTypes=', '', row["MetFragCLIString"])) + '<br>\n'))
 			# New compound in list
 			if (row["name"] != compound):
 				compound = row["name"]
 				candidates = 0
 				identifier = row["name"]
 				monoisotopic_mass = row["MonoisotopicMass"]
-				retention_time = row["retention_time"]
+				precursor_rt = row["retention_time"]
+				precursor_mz = row["precursor_mz"]
 				precursor_type = row["precursor_type"]
 				
 				if (line_count > 1):
@@ -324,12 +329,13 @@ with open(input_tsv, "r") as metfrag_file:
 				
 				metfrag_html.write(str('\n' + '<h2>' + identifier + '</h2>\n'))
 				metfrag_html.write(str('<p><b>Precursor Type:</b> ' + str(precursor_type) + '<br>'))
-				metfrag_html.write(str('<b>Precursor Monoisotopic Mass:</b> ' + str(round(float(monoisotopic_mass), 4)) + '<br>'))
-				metfrag_html.write(str('<b>Precursor Retention Time:</b> ' + str(round(float(retention_time), 4)) + '<br></p>'))
+				metfrag_html.write(str('<b>Precursor Mass:</b> ' + str(round(float(precursor_mz), 4)) + '<br>'))
+				metfrag_html.write(str('<b>Precursor Retention Time:</b> ' + str(round(float(precursor_rt), 4)) + '<br></p>'))
 				metfrag_html.write(str('\n' + '<table>\n'))
 				metfrag_html.write(str('<tr style="vertical-align:bottom; background-color:#e3efdf;">'
 				                              + '<td class="tdmax">' + '<b>Spectrum</b>' + '</td>'
 				                              + '<td class="tdmax">' + '<b>Structure</b>' + '</td>'
+										      + '<td>' + '<b>Monoisotopic Mass</b>' + '</td>'
 										      + '<td>' + '<b>Molecular Formula</b>' + '</td>'
 										      + '<td>' + '<b>Compound Name</b>' + '</td>'
 										      + '<td class="tdvar">' + '<b>PubChem Synonyms</b>' + '</td>'
@@ -350,14 +356,16 @@ with open(input_tsv, "r") as metfrag_file:
 				inchi = row["InChI"]
 				smiles = row["SMILES"]
 				mol_formula = row["MolecularFormula"]
-				compound_name = row["CompoundName"]
+				compound_name = row["IUPACName"]
 				frag_score = row["FragmenterScore"]
 				metfusion_score = row["OfflineMetFusionScore"]
 				score = row["Score"]
-				suspectlist_score = row["SuspectListScore"]
+				if "SuspectListScore" in row:
+					suspectlist_score = row["SuspectListScore"]
+				else:
+					suspectlist_score = 0
 				peaks_explained = row["NoExplPeaks"]
 				peaks_used = row["NumberPeaksUsed"]
-				spectrum = row["PeakListString"]
 				spectrum_explained = row["ExplPeaks"]
 				spectrum_explained_formulas = row["FormulasOfExplPeaks"]
 				identifier = row["Identifier"]
@@ -375,6 +383,7 @@ with open(input_tsv, "r") as metfrag_file:
 					compound_classes = '&nbsp;'
 				
 				# Draw Spectrum
+				spectrum = re.sub(' .*', '', re.sub('.*PeakListString=', '', row["MetFragCLIString"]))
 				spectrum_string = plot_spectrum(spectrum, spectrum_explained, spectrum_explained_formulas)
 				
 				# Draw SVG
@@ -387,10 +396,33 @@ with open(input_tsv, "r") as metfrag_file:
 				                     '<a target="_blank" href="' + biocyc_link(compound_name) + '">BioCyc</a>' + ', ' +
 				                     '<a target="_blank" href="' + chebi_link(inchi) + '">ChEBI</a>')
 				
+				# MetFragWeb
+				FragmentPeakMatchAbsoluteMassDeviation = str('' + re.sub(' .*', '', re.sub('.*FragmentPeakMatchAbsoluteMassDeviation=', 'FragmentPeakMatchAbsoluteMassDeviation=', row["MetFragCLIString"])))
+				FragmentPeakMatchRelativeMassDeviation = str('' + re.sub(' .*', '', re.sub('.*FragmentPeakMatchRelativeMassDeviation=', 'FragmentPeakMatchRelativeMassDeviation=', row["MetFragCLIString"])))
+				DatabaseSearchRelativeMassDeviation = str('' + re.sub(' .*', '', re.sub('.*DatabaseSearchRelativeMassDeviation=', 'DatabaseSearchRelativeMassDeviation=', row["MetFragCLIString"])))
+				IonizedPrecursorMass = str('IonizedPrecursorMass=' + str(row["precursor_mz"]))
+				NeutralPrecursorMass = str('' + re.sub(' .*', '', re.sub('.*NeutralPrecursorMass=', 'NeutralPrecursorMass=', row["MetFragCLIString"])))
+				NeutralPrecursorMolecularFormula = str('NeutralPrecursorMolecularFormula=' + str(row["MolecularFormula"]))
+				PrecursorIonMode = str('' + re.sub(' .*', '', re.sub('.*PrecursorIonMode=', 'PrecursorIonMode=', row["MetFragCLIString"])))
+				PeakList = str('' + re.sub(' .*', '', re.sub('.*PeakListString=', 'PeakList=', row["MetFragCLIString"])))
+				MetFragDatabaseType = str('' + re.sub(' .*', '', re.sub('.*MetFragDatabaseType=', 'MetFragDatabaseType=', row["MetFragCLIString"])))
+				
+				metfrag_web = str('https://msbi.ipb-halle.de/MetFrag/landing.xhtml?' + 
+				                  FragmentPeakMatchAbsoluteMassDeviation + '&' +
+				                  FragmentPeakMatchRelativeMassDeviation + '&' +
+				                  DatabaseSearchRelativeMassDeviation + '&' +
+				                  IonizedPrecursorMass + '&' +
+				                  NeutralPrecursorMass + '&' +
+				                  #NeutralPrecursorMolecularFormula + '&' +
+				                  PrecursorIonMode + '&' +
+				                  PeakList + '&' +
+				                  MetFragDatabaseType)
+				
 				# Write html code
 				metfrag_html.write(str('<tr style="vertical-align:center">'
 				                              + '<td class="tdmax">' + spectrum_string + '</td>'
 				                              + '<td class="tdmax">' + svg_string + '</td>'
+											  + '<td>' + monoisotopic_mass + '</td>'
 											  + '<td>' + mol_formula + '</td>'
 											  + '<td>' + compound_name + '</td>'
 											  + '<td class="tdvar">' + pubchem_synonyms + '</td>'
@@ -400,7 +432,7 @@ with open(input_tsv, "r") as metfrag_file:
 											  + '<td>' + str(round(float(frag_score), 3)) + '</td>'
 											  + '<td>' + str(round(float(suspectlist_score), 3)) + '</td>'
 											  + '<td>' + peaks_explained + ' / ' + peaks_used + '</td>'
-											  + '<td>' + '&nbsp;' + '</td>'
+											  + '<td>' + '<a  target="_blank" href="' + metfrag_web + '">MetFragWeb</a>' + '</td>'
 											  + '<td>' + external_links + '</td>'
 											  + '<td class="tdmax">' + inchi + '</td>'
 											  + '</tr>\n'))
